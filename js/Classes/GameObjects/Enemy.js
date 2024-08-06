@@ -39,11 +39,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     init() {
         this.setOrigin(0.5, 0.5);
-        this.setPosition(this.scene.game.config.width / 10 + this.scene.game.config.width / 20, this.scene.game.config.height / 10 + this.scene.game.config.height / 20);
+        this.setPosition(
+            this.scene.game.config.width / 10 + this.scene.game.config.width / 20,
+            this.scene.game.config.height / 10 + this.scene.game.config.height / 20
+        );
         this.scene.add.existing(this);
         this.scene.enemys.add(this);
 
-        this.anims.play('right')
+        this.anims.play('right');
 
         this.setCollideWorldBounds(true);
         this.body.velocity.set(250, 0);
@@ -74,7 +77,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    hit() {
+    hit(damage) {
         this.scene.tweens.add({
             targets: this,
             tint: 0xff0000,
@@ -82,6 +85,21 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             onComplete: () => {
                 // 애니메이션이 완료된 후 실행할 콜백 함수
                 this.clearTint(); // 애니메이션이 완료된 후 원래 색상으로 복원
+            },
+        });
+
+        this.damageText = this.scene.add.text(this.x, this.y, damage);
+        this.damageText.setOrigin(0.5, 1);
+        this.damageText.setStroke('x0000000', 4);
+
+        this.scene.tweens.add({
+            targets: this.damageText,
+            alpha: 0,
+            y: this.damageText.y - 6,
+            duration: 200, // 반짝이는 시간
+            onComplete: () => {
+                // 애니메이션이 완료된 후 실행할 콜백 함수
+                this.damageText.destroy();
             },
         });
     }

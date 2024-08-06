@@ -110,7 +110,7 @@ class MainScene extends Phaser.Scene {
 
                     // 거리와 폭발 반경을 비교하여 폭발 범위 내 적인지 확인
                     if (distance <= explosionRadius) {
-                        target.hit(); // 적에게 히트 처리
+                        target.hit(projectile.damage); // 적에게 히트 처리
                         target.hp -= projectile.damage; // 적의 HP 감소
 
                         if (target.hp <= 0) {
@@ -121,7 +121,7 @@ class MainScene extends Phaser.Scene {
             } else {
                 // 일반적인 프로젝타일 처리
                 projectile.parent.killCount += 1;
-                enemy.hit();
+                enemy.hit(projectile.damage);
                 enemy.hp -= projectile.damage;
 
                 if (enemy.hp <= 0) {
