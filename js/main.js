@@ -9,13 +9,12 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false,
+            debug: true,
         },
     },
     scene: [MainScene],
     scale: {
-        mode: Phaser.Scale.FIT, // 게임 화면을 부모 컨테이너에 맞게 조정
-        // autoCenter: Phaser.Scale.CENTER_BOTH, // 수평 및 수직 중앙 정렬
+        mode: Phaser.Scale.FIT,
     },
 };
 

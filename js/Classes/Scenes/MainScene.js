@@ -1,6 +1,6 @@
 import Box from '../GameObjects/Box.js';
 import Enemy from '../GameObjects/Enemy.js';
-import Star from '../GameObjects/Star.js';
+import Star from '../GameObjects/Tower.js';
 
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -28,7 +28,7 @@ class MainScene extends Phaser.Scene {
     create() {
         const { width, height } = this.game.config;
 
-        this.stars = this.add.group({
+        this.towers = this.add.group({
             runChildUpdate: true,
         });
 
@@ -84,26 +84,50 @@ class MainScene extends Phaser.Scene {
 
             this.grid.data.cells[Math.floor(x / cellWidth)][Math.floor(y / cellHeight)].isTower = true;
 
-            this.stars.add(new Star(this, cellX, cellY - 10));
+            this.towers.add(new Star(this, cellX, cellY - 10));
             this.gold -= 50;
         });
 
         this.goldText = this.add.text(10, 10, `${this.gold} Gold`);
         this.spawnCountText = this.add.text(10, 20 + this.goldText.y, `${this.level + 1} Wave`);
-        console.log(this.spawnCountText)
+        console.log(this.spawnCountText);
         this.enemyText = this.add.text(10, 20 + this.spawnCountText.y, `0 Enemys`);
 
-        this.physics.add.collider(this.stars, this.stars);
         this.physics.add.overlap(this.enemys, this.projectiles, (enemy, projectile) => {
             if (!enemy.alive) return;
             projectile.destroy();
-            projectile.parent.killCount += 1;
-            enemy.hit();
-            enemy.hp -= projectile.damage;
 
-            if (enemy.hp <= 0) {
-                projectile.parent.closestObject = null;
-                enemy.die();
+            if (projectile.type === 'explosion') {
+                const explosionRadius = projectile.radius; // 폭발 범위
+
+                // 폭발 범위 내 적들을 찾기
+                this.enemys.getChildren().forEach((target) => {
+                    if (!target.alive) return;
+
+                    // 적의 위치와 폭발 중심 사이의 거리 계산
+                    const distance = Phaser.Math.Distance.Between(projectile.x, projectile.y, target.x, target.y);
+                    projectile.drawExplosionRange(this);
+
+                    // 거리와 폭발 반경을 비교하여 폭발 범위 내 적인지 확인
+                    if (distance <= explosionRadius) {
+                        target.hit(); // 적에게 히트 처리
+                        target.hp -= projectile.damage; // 적의 HP 감소
+
+                        if (target.hp <= 0) {
+                            target.die(); // 적이 죽었을 때 처리
+                        }
+                    }
+                });
+            } else {
+                // 일반적인 프로젝타일 처리
+                projectile.parent.killCount += 1;
+                enemy.hit();
+                enemy.hp -= projectile.damage;
+
+                if (enemy.hp <= 0) {
+                    projectile.parent.closestObject = null;
+                    enemy.die();
+                }
             }
         });
 
@@ -197,7 +221,6 @@ class MainScene extends Phaser.Scene {
         new Box(this, 6, 3);
         new Box(this, 7, 3);
 
-
         this.spwanWave();
     }
 
@@ -221,7 +244,7 @@ class MainScene extends Phaser.Scene {
     update() {
         this.goldText.text = `${this.gold.toLocaleString()} Gold`;
         this.spawnCountText.text = `${(this.level + 1).toLocaleString()} Wave`;
-        this.enemyText.text = `${(this.enemys.getChildren().length).toLocaleString()} Enemys`;
+        this.enemyText.text = `${this.enemys.getChildren().length.toLocaleString()} Enemys`;
 
         if (this.enemys.getChildren().length === 0 && this.waveTimer) {
             clearTimeout(this.waveTimer);

@@ -1,9 +1,9 @@
 import Projectile from './Projectile.js';
 
-class Star extends Phaser.Physics.Arcade.Image {
+class Tower extends Phaser.Physics.Arcade.Image {
     constructor(scene, x, y) {
         super(scene, x, y, 'tower');
-        this.name = 'star';
+        this.name = 'tower';
 
         this.setDepth(y);
 
@@ -14,9 +14,11 @@ class Star extends Phaser.Physics.Arcade.Image {
         this.range = 200;
         this.attackDamage = 5;
         this.attackDelay = 1000;
-        this.projectileSpeed = 500;
+        this.projectileSpeed = 200;
         this.closestObject = null;
         this.killCount = 0;
+
+        this.maximumProjectileSpeed = 1000;
 
         this.init();
     }
@@ -26,7 +28,7 @@ class Star extends Phaser.Physics.Arcade.Image {
         this.setInteractive();
         this.scene.add.existing(this);
 
-        this.scene.stars.add(this);
+        this.scene.towers.add(this);
         this.setScale(0.4);
 
         this.circle = this.scene.add.graphics();
@@ -55,7 +57,10 @@ class Star extends Phaser.Physics.Arcade.Image {
             this.level += 1;
             this.range += 10;
             this.attackDamage += 5;
-            this.projectileSpeed += 100;
+            this.projectileSpeed += 50;
+            if (this.maximumProjectileSpeed < this.projectileSpeed) {
+                this.projectileSpeed = this.maximumProjectileSpeed;
+            }
         });
 
         this.on(
@@ -83,7 +88,7 @@ class Star extends Phaser.Physics.Arcade.Image {
             delay: this.attackDelay,
             callback: this.attack,
             callbackScope: this,
-            loop: true
+            loop: true,
         });
     }
 
@@ -125,4 +130,4 @@ class Star extends Phaser.Physics.Arcade.Image {
     }
 }
 
-export default Star;
+export default Tower;
