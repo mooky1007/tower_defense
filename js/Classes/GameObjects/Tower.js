@@ -30,7 +30,7 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
 
     setTowerData() {
         this.level = 0;
-        this.range = this.scene.game.tile.width;
+        this.range = this.scene.game.tile.width + 20;
         this.radius = this.scene.game.tile.width;
         this.attackDamage = 3;
         this.attackDelay = 500;
