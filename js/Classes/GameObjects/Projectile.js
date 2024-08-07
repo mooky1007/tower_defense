@@ -1,16 +1,15 @@
 class Projectile extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y) {
+    constructor(scene, x, y, target) {
         super(scene, x, y, 'projectile');
         this.name = 'projectile';
         this.scene.physics.world.enable(this);
 
-        // this.type = 'explosion';
-        // this.radius = 50;
+        this.type = 'explosion';
 
         this.body.allowGravity = false;
-
         this.direction = new Phaser.Math.Vector2();
 
+        this.target = target;
         this.init();
     }
 
@@ -31,13 +30,18 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     fire(x, y, angle, speed) {
         this.setPosition(x, y);
+
+        const radians = Phaser.Math.DegToRad(angle) - Math.PI / 4;
+        this.setRotation(radians);
+        this.speed = speed;
         this.direction.setToPolar(angle, 1);
         this.body.velocity.set(this.direction.x * speed, this.direction.y * speed);
     }
 
-    drawExplosionRange(scene) {
-        this.explosionGraphics.fillStyle(0xff0000, 0.05); // 색상과 투명도 설정
-        this.explosionGraphics.fillCircle(this.x, this.y, this.radius); // 원 그리기
+    drawExplosionRange(scene, target) {
+        this.explosionGraphics.fillStyle(0xff0000, 0.1); // 색상과 투명도 설정
+        this.explosionGraphics.fillCircle(target.x, target.y, this.radius); // 원 그리기
+        this.explosionGraphics.setDepth(-1);
 
         scene.tweens.add({
             targets: this.explosionGraphics,
@@ -47,7 +51,10 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
                 this.explosionGraphics.destroy();
             },
         });
+    }
 
+    update() {
+        this.rotation = Math.atan2(this.body.velocity.y, this.body.velocity.x);
     }
 }
 
