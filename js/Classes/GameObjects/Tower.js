@@ -75,7 +75,7 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
 
     attack() {
         if (this.rangeArea.enemiesInRange.size !== 0) {
-            const target = [...this.rangeArea.enemiesInRange][0];
+            const target = Array.from(this.rangeArea.enemiesInRange)[0];
 
             const angle = Phaser.Math.Angle.Between(this.rangeArea.x, this.rangeArea.y, target.x, target.y);
 

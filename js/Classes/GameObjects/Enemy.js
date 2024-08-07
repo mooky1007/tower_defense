@@ -38,7 +38,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setDepth(-1);
         this.level = config.level || 0;
         this.speed = 100;
-        this.hp = (config.hp || 5) + this.level * 20;
+        this.hp = (config.hp || 5) + this.level * 5;
         this.originHp = this.hp;
         this.gold = (config.gold || 5) + this.level;
 

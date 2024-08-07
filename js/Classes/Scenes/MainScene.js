@@ -219,7 +219,7 @@ class MainScene extends Phaser.Scene {
                 this.waveTimer = setTimeout(() => {
                     this.level += 1;
                     this.spwanWave();
-                }, 10000);
+                }, 90000);
             }
         }, 500);
     }
