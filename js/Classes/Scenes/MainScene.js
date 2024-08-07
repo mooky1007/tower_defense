@@ -62,37 +62,32 @@ class MainScene extends Phaser.Scene {
         this.enemys = this.add.group();
         this.zones = this.add.group();
 
-        new DecoTile(this, 0, 1, 'dirty05');
-        new DecoTile(this, 1, 1, 'dirty01');
-        new DecoTile(this, 2, 1, 'dirty01');
+        new DecoTile(this, 2, 1, 'dirty05');
         new DecoTile(this, 3, 1, 'dirty01');
         new DecoTile(this, 4, 1, 'dirty01');
         new DecoTile(this, 5, 1, 'dirty01');
         new DecoTile(this, 6, 1, 'dirty01');
         new DecoTile(this, 7, 1, 'dirty01');
         new DecoTile(this, 8, 1, 'dirty01');
-        new DecoTile(this, 9, 1, 'dirty01');
-        new DecoTile(this, 10, 1, 'dirty06');
-        new DecoTile(this, 10, 2, 'dirty03');
-        new DecoTile(this, 10, 3, 'dirty03');
-        new DecoTile(this, 10, 4, 'dirty03');
-        new DecoTile(this, 10, 5, 'dirty03');
-        new DecoTile(this, 0, 2, 'dirty03');
-        new DecoTile(this, 0, 3, 'dirty03');
-        new DecoTile(this, 0, 4, 'dirty03');
-        new DecoTile(this, 0, 5, 'dirty03');
-        new DecoTile(this, 0, 6, 'dirty04');
-        new DecoTile(this, 1, 6, 'dirty01');
-        new DecoTile(this, 2, 6, 'dirty01');
-        new DecoTile(this, 3, 6, 'dirty01');
-        new DecoTile(this, 4, 6, 'dirty01');
-        new DecoTile(this, 5, 6, 'dirty01');
-        new DecoTile(this, 6, 6, 'dirty01');
-        new DecoTile(this, 7, 6, 'dirty01');
-        new DecoTile(this, 8, 6, 'dirty01');
-        new DecoTile(this, 9, 6, 'dirty01');
-        new DecoTile(this, 10, 6, 'dirty02');
 
+        new DecoTile(this, 8, 1, 'dirty06');
+        new DecoTile(this, 8, 2, 'dirty03');
+        new DecoTile(this, 8, 3, 'dirty03');
+        new DecoTile(this, 8, 4, 'dirty03');
+        new DecoTile(this, 8, 5, 'dirty03');
+        new DecoTile(this, 8, 6, 'dirty03');
+        new DecoTile(this, 8, 7, 'dirty02');
+        new DecoTile(this, 2, 2, 'dirty03');
+        new DecoTile(this, 2, 3, 'dirty03');
+        new DecoTile(this, 2, 4, 'dirty03');
+        new DecoTile(this, 2, 5, 'dirty03');
+        new DecoTile(this, 2, 6, 'dirty03');
+        new DecoTile(this, 2, 7, 'dirty04');
+        new DecoTile(this, 3, 7, 'dirty01');
+        new DecoTile(this, 4, 7, 'dirty01');
+        new DecoTile(this, 5, 7, 'dirty01');
+        new DecoTile(this, 6, 7, 'dirty01');
+        new DecoTile(this, 7, 7, 'dirty01');
         new DecoTile(this, 2, 3, 'grass01', false);
         new DecoTile(this, 6, 4, 'grass06', false);
         new DecoTile(this, 4, 3, 'grass02', false);
@@ -102,8 +97,8 @@ class MainScene extends Phaser.Scene {
         new DecoTile(this, 7, 3, 'grass03', false);
         new DecoTile(this, 6, 6, 'grass04', false);
 
-        for (let i = 2; i <= 5; i++) {
-            for (let j = 1; j <= 9; j++) {
+        for (let i = 2; i <= 6; i++) {
+            for (let j = 3; j <= 7; j++) {
                 this.zones.add(new ZoneTile(this, j, i));
             }
         }
@@ -118,7 +113,7 @@ class MainScene extends Phaser.Scene {
 
         this.add.graphics().fillStyle('0x000000', 1).fillRect(0, 0, width, this.game.tile.width);
 
-        this.bottomArea = this.add.zone(0, this.game.tile.height * 7, width, this.game.tile.height * 4);
+        this.bottomArea = this.add.zone(0, this.game.tile.height * 8, width, this.game.tile.height * 3);
         this.bottomArea.setOrigin(0, 0);
         this.physics.add.existing(this.bottomArea);
         this.bottomArea.body.allowGravity = false;
@@ -128,7 +123,31 @@ class MainScene extends Phaser.Scene {
         this.add
             .graphics()
             .fillStyle('0x000000', 1)
-            .fillRect(0, this.game.tile.height * 7, width, this.game.tile.height * 4);
+            .fillRect(0, this.game.tile.height * 8, width, this.game.tile.height * 3);
+
+        this.leftArea = this.add.zone(0, 0, this.game.tile.width * 2, this.game.tile.height * 8);
+        this.leftArea.setOrigin(0, 0);
+        this.physics.add.existing(this.leftArea);
+        this.leftArea.body.allowGravity = false;
+        this.leftArea.body.immovable = true;
+        this.physics.add.collider(this.enemys, this.leftArea);
+        this.physics.add.collider(this.projectiles, this.leftArea, (projectile) => projectile.destroy());
+        this.add
+            .graphics()
+            .fillStyle('0x000000', 1)
+            .fillRect(0, 0, this.game.tile.width * 2, this.game.tile.height * 8);
+
+        this.rightArea = this.add.zone(this.game.tile.width * 9, 0, width, this.game.tile.height * 8);
+        this.rightArea.setOrigin(0, 0);
+        this.physics.add.existing(this.rightArea);
+        this.rightArea.body.allowGravity = false;
+        this.rightArea.body.immovable = true;
+        this.physics.add.collider(this.enemys, this.rightArea);
+        this.physics.add.collider(this.projectiles, this.rightArea, (projectile) => projectile.destroy());
+        this.add
+            .graphics()
+            .fillStyle('0x000000', 1)
+            .fillRect(this.game.tile.width * 9, 0, width, this.game.tile.height * 8);
 
         this.towers.runChildUpdate = true;
         this.projectiles.runChildUpdate = true;

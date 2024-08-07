@@ -34,7 +34,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         });
 
         this.setSize(this.scene.game.tile.width, this.scene.game.tile.height);
-        this.setPosition(0, this.scene.game.tile.height + this.scene.game.tile.height / 2);
+        this.setPosition(this.scene.game.tile.width * 2 + this.scene.game.tile.width / 2, this.scene.game.tile.height + this.scene.game.tile.height / 2);
         this.setDepth(-1);
         this.level = config.level || 0;
         this.speed = 100;

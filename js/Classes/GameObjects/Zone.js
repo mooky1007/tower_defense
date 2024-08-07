@@ -33,11 +33,11 @@ class ZoneTile extends Phaser.GameObjects.Zone {
         this.on(
             'pointerdown',
             () => {
-                if (this.isTower) {
-                    this.tower.levelUp();
-                    this.tower.update();
-                } else {
-                    if (this.state === 'selected') {
+                if (this.state === 'selected') {
+                    if (this.isTower) {
+                        this.tower.levelUp();
+                        this.tower.update();
+                    } else {
                         if (this.scene.gold < 50) {
                             this.state = 'normal';
                             this.update();
@@ -49,14 +49,14 @@ class ZoneTile extends Phaser.GameObjects.Zone {
                         this.tower.setPosition(this.tower.x, this.tower.y - (this.tower.height - this.height) / 2);
                         this.state = 'normal';
                         this.update();
-                    } else {
-                        this.scene.zones?.selected?.destroy();
-                        this.scene.zones.getChildren().forEach((zone) => {
-                            zone.state = 'normal';
-                        });
-                        this.state = 'selected';
-                        this.update();
                     }
+                } else {
+                    this.scene.zones?.selected?.destroy();
+                    this.scene.zones.getChildren().forEach((zone) => {
+                        zone.state = 'normal';
+                    });
+                    this.state = 'selected';
+                    this.update();
                 }
             },
             this

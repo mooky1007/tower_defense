@@ -133,13 +133,18 @@ class RangeCircle extends Phaser.GameObjects.Zone {
 
         this.circle = this.scene.add.graphics();
         this.circle.setDepth(-1);
-        this.circle.setVisible(false);
     }
 
     update() {
         this.circle.clear(); // clear previous circle
         this.circle.lineStyle(2, 0xff0000, 0.5);
         this.circle.strokeCircle(this.x, this.y, this.parent.range);
+
+        if (this.parent.parent.state === 'selected') {
+            this.circle.setVisible(true);
+        } else {
+            this.circle.setVisible(false);
+        }
 
         for (const enemy of this.enemiesInRange) {
             if (!enemy.alive) this.enemiesInRange.delete(enemy);
