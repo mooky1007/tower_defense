@@ -127,7 +127,7 @@ class RangeCircle extends Phaser.GameObjects.Zone {
         this.scene.physics.add.overlap(this.scene.enemys, this, (enemy, range) => {
             if (!this.enemiesInRange.has(enemy)) {
                 this.enemiesInRange.add(enemy);
-                enemy.setTint(0xff0000, 0.1);
+                // enemy.setTint(0xff0000, 0.1);
             }
         });
 
@@ -147,7 +147,7 @@ class RangeCircle extends Phaser.GameObjects.Zone {
             const distance = Phaser.Math.Distance.Between(this.parent.parent.x, this.parent.parent.y, enemy.x, enemy.y);
             if (distance > this.radius) {
                 this.enemiesInRange.delete(enemy);
-                enemy.clearTint();
+                // enemy.clearTint();
             }
         }
     }
