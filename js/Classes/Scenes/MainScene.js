@@ -10,16 +10,13 @@ class MainScene extends Phaser.Scene {
         super({ key: 'GameScene' });
 
         this.spawnCount = 0;
-        this.gold = 500000;
+        this.gold = 100;
         this.level = 0;
     }
 
     // 외부 파일 혹은 assets을 미리 불러오기 위한 작업 처리
     preload() {
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image('ground', 'assets/platform.png');
-        this.load.image('star', 'assets/star.png');
-        this.load.spritesheet('tower', 'assets/tower/3.png', {
+        this.load.spritesheet('tower', 'assets/tower/1.png', {
             frameWidth: 70,
             frameHeight: 130,
         });
@@ -139,8 +136,9 @@ class MainScene extends Phaser.Scene {
 
         this.towerUI = new TowerUI(this, 0, 0);
 
-        this.goldText = this.add.text(10, 10, `${this.gold} Gold`);
-        this.spawnCountText = this.add.text(10, 20 + this.goldText.y, `${this.level + 1} Wave`);
+        this.goldText = this.add.text(width - 20, 10, `${this.gold} Gold`);
+        this.goldText.setOrigin(1, 0);
+        this.spawnCountText = this.add.text(10, 10, `${this.level + 1} Wave`);
         this.enemyText = this.add.text(10, 20 + this.spawnCountText.y, `0 Enemys`);
 
         this.physics.add.overlap(this.enemys, this.projectiles, (enemy, projectile) => {
@@ -194,7 +192,7 @@ class MainScene extends Phaser.Scene {
         let waveEnemy = 1;
         this.enemys.add(new Enemy(this, 0, 0, { level: this.level }));
         this.spwanTimer = setInterval(() => {
-            if (waveEnemy < 50) {
+            if (waveEnemy < 25 + this.level * 5) {
                 waveEnemy += 1;
                 this.enemys.add(new Enemy(this, 0, 0, { level: this.level }));
             } else {
@@ -204,7 +202,7 @@ class MainScene extends Phaser.Scene {
                     this.spwanWave();
                 }, 10000);
             }
-        }, 750);
+        }, 500);
     }
 
     update() {

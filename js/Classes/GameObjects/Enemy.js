@@ -33,14 +33,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             repeat: -1,
         });
 
-        this.setSize(this.scene.game.tile.width, this.scene.game.tile.height)
+        this.setSize(this.scene.game.tile.width, this.scene.game.tile.height);
         this.setPosition(0, this.scene.game.tile.height + this.scene.game.tile.height / 2);
         this.setDepth(-1);
         this.level = config.level || 0;
-        this.speed = (config.speed || 100) + this.level * 10;
-        this.hp = (config.hp || 5) + this.level * 5;
+        this.speed = 100;
+        this.hp = (config.hp || 5) + this.level * 20;
         this.originHp = this.hp;
-        this.gold = (config.gold || 10) + this.level * 5;
+        this.gold = (config.gold || 5) + this.level;
 
         this.init();
     }
@@ -55,16 +55,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
         this.body.velocity.set(this.speed, 0);
 
-        this.hpBar = this.scene.add.graphics();
-        this.hpBar.fillStyle(0xff0000, 1);
-        this.hpBar.fillRect(0, 0, this.width, 3);
-        this.hpBar.setPosition(this.x - this.width / 2, this.y + this.height / 2);
-        this.hpBar.setDepth(1);
+        this.hpBar = this.scene.add.rectangle(this.x, this.y + this.height / 3, this.scene.game.tile.width / 4 + 2, 3, 0x000000);
+        this.hpBar.setOrigin(0.5, 0.5);
+
+        this.hpBarInner = this.scene.add.rectangle(this.x, this.y + this.height / 3, this.scene.game.tile.width / 4, 2, 0xff0000);
+        this.hpBarInner.setOrigin(0.5, 0.5);
     }
 
     update() {
         if (this.alive) {
-            this.hpBar.setPosition(this.x - this.width / 2, this.y + this.height / 2);
+            this.hpBar.setPosition(this.x, this.y + this.height / 3);
+            this.hpBarInner.setPosition(this.x, this.y + this.height / 3);
             if (this.body.blocked.right) {
                 this.anims.play('left');
                 this.body.velocity.y = this.speed; // turn left
@@ -104,8 +105,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             onComplete: () => {
                 // 애니메이션이 완료된 후 실행할 콜백 함수
                 this.damageText.destroy();
-                this.hpBar.clear();
-                this.hpBar.fillRect(0, 0, this.width * (this.hp / this.originHp), 3);
+                this.hpBarInner.width = this.hpBarInner.width * (this.hp / this.originHp);
             },
         });
     }
@@ -114,6 +114,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.alive = false;
         this.setVelocity(0);
         this.hpBar.destroy();
+        this.hpBarInner.destroy();
 
         this.anims.play('die');
 

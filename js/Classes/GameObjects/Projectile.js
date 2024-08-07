@@ -4,7 +4,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.name = 'projectile';
         this.scene.physics.world.enable(this);
 
-        this.type = 'explosion';
+        // this.type = 'explosion';
 
         this.body.allowGravity = false;
         this.direction = new Phaser.Math.Vector2();
