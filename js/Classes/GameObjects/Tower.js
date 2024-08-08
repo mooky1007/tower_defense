@@ -1,9 +1,10 @@
 import Projectile from './Projectile.js';
 
 class Tower extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, parent) {
+    constructor(type = 'normal', scene, x, y, parent) {
         super(scene, x, y, 'tower');
         this.name = 'tower';
+        this.type = type;
         this.setTowerData();
         this.attackTimer = null;
         this.parent = parent;
@@ -31,11 +32,35 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         this.level = 0;
         this.range = this.scene.game.tile.width + 20;
         this.radius = this.scene.game.tile.width;
-        this.type = 'normal';
         this.attackDamage = 3;
         this.attackDelay = 500;
         this.projectileSpeed = 500;
         this.killCount = 0;
+
+        if (this.type === 'normal') {
+        }
+
+        if (this.type === 'explosion') {
+            console.log('a');
+            this.attackDamage = 1;
+            this.range = this.scene.game.tile.width;
+            this.setTint(0xff0000, 0xffffff, 0xffffff, 0xffffff);
+        }
+
+        if (this.type === 'long') {
+          console.log('a');
+          this.attackDamage = 10;
+          this.range = this.scene.game.tile.width * 3;
+          this.setTint(0x00ff00, 0xffffff, 0xffffff, 0xffffff);
+      }
+
+      if (this.type === 'fast') {
+        console.log('a');
+        this.attackDamage = 1;
+        this.attackDelay = 100
+        this.range = this.scene.game.tile.width;
+        this.setTint(0x0000ff, 0xffffff, 0xffffff, 0xffffff);
+    }
 
         this.maximumProjectileSpeed = 3000;
     }
@@ -79,7 +104,7 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
 
             const angle = Phaser.Math.Angle.Between(this.rangeArea.x, this.rangeArea.y, target.x, target.y);
 
-            const projectile = new Projectile(this.scene, this.rangeArea.x, this.rangeArea.y, target);
+            const projectile = new Projectile(this.scene, this.rangeArea.x, this.rangeArea.y, target, this.type);
             projectile.parent = this;
             projectile.damage = this.attackDamage;
             projectile.radius = this.radius;
@@ -125,7 +150,7 @@ class RangeCircle extends Phaser.GameObjects.Zone {
         this.scene.physics.add.overlap(this.scene.enemys, this, (enemy, range) => {
             if (!this.enemiesInRange.has(enemy)) {
                 this.enemiesInRange.add(enemy);
-                enemy.setTint(0xff0000, 0.1);
+                // enemy.setTint(0xff0000, 0.1);
             }
         });
 

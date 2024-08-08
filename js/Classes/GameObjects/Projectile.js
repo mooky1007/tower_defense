@@ -1,10 +1,10 @@
 class Projectile extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, target) {
+    constructor(scene, x, y, target, type) {
         super(scene, x, y, 'projectile');
         this.name = 'projectile';
         this.scene.physics.world.enable(this);
 
-        // this.type = 'explosion';
+        this.type = type;
 
         this.body.allowGravity = false;
         this.direction = new Phaser.Math.Vector2();
