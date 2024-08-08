@@ -34,6 +34,10 @@ class App extends Phaser.Game {
             event.preventDefault(); // 기본 컨텍스트 메뉴의 표시를 막습니다.
         });
     }
+
+    gameover() {
+        this.isPaused = true;
+    }
 }
 
 const game = new App(config);

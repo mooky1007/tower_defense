@@ -11,6 +11,7 @@ class MainScene extends Phaser.Scene {
 
         this.spawnCount = 0;
         this.gold = 100;
+
         this.level = 0;
     }
 
@@ -88,14 +89,36 @@ class MainScene extends Phaser.Scene {
         new DecoTile(this, 5, 7, 'dirty01');
         new DecoTile(this, 6, 7, 'dirty01');
         new DecoTile(this, 7, 7, 'dirty01');
-        new DecoTile(this, 2, 3, 'grass01', false);
-        new DecoTile(this, 6, 4, 'grass06', false);
-        new DecoTile(this, 4, 3, 'grass02', false);
-        new DecoTile(this, 5, 3, 'grass05', false);
-        new DecoTile(this, 3, 3, 'grass01', false);
-        new DecoTile(this, 5, 4, 'grass02', false);
+
+        new DecoTile(this, 3, 2, 'grass06', false);
+        new DecoTile(this, 4, 2, 'grass03', false);
+        new DecoTile(this, 5, 2, 'grass06', false);
+        new DecoTile(this, 6, 2, 'grass03', false);
+        new DecoTile(this, 7, 2, 'grass06', false);
+
+        new DecoTile(this, 3, 3, 'grass03', false);
+        new DecoTile(this, 4, 3, 'grass06', false);
+        new DecoTile(this, 5, 3, 'grass03', false);
+        new DecoTile(this, 6, 3, 'grass06', false);
         new DecoTile(this, 7, 3, 'grass03', false);
-        new DecoTile(this, 6, 6, 'grass04', false);
+
+        new DecoTile(this, 3, 4, 'grass06', false);
+        new DecoTile(this, 4, 4, 'grass03', false);
+        new DecoTile(this, 5, 4, 'grass06', false);
+        new DecoTile(this, 6, 4, 'grass03', false);
+        new DecoTile(this, 7, 4, 'grass06', false);
+
+        new DecoTile(this, 3, 5, 'grass03', false);
+        new DecoTile(this, 4, 5, 'grass06', false);
+        new DecoTile(this, 5, 5, 'grass03', false);
+        new DecoTile(this, 6, 5, 'grass06', false);
+        new DecoTile(this, 7, 5, 'grass03', false);
+
+        new DecoTile(this, 3, 6, 'grass06', false);
+        new DecoTile(this, 4, 6, 'grass03', false);
+        new DecoTile(this, 5, 6, 'grass06', false);
+        new DecoTile(this, 6, 6, 'grass03', false);
+        new DecoTile(this, 7, 6, 'grass06', false);
 
         for (let i = 2; i <= 6; i++) {
             for (let j = 3; j <= 7; j++) {
@@ -183,6 +206,7 @@ class MainScene extends Phaser.Scene {
                         if (distance <= explosionRadius) {
                             target.hit(projectile); // 적에게 히트 처리
                             target.hp -= projectile.damage; // 적의 HP 감소
+                            target.update();
 
                             if (target.hp <= 0) {
                                 projectile.parent.killCount += 1;
@@ -192,12 +216,12 @@ class MainScene extends Phaser.Scene {
                     });
                 } else {
                     // 일반적인 프로젝타일 처리
-                    projectile.parent.killCount += 1;
                     enemy.hit(projectile);
                     enemy.hp -= projectile.damage;
+                    enemy.update();
 
                     if (enemy.hp <= 0) {
-                        projectile.parent.closestObject = null;
+                        projectile.parent.killCount += 1;
                         enemy.die();
                     }
                 }
@@ -219,7 +243,7 @@ class MainScene extends Phaser.Scene {
                 this.waveTimer = setTimeout(() => {
                     this.level += 1;
                     this.spwanWave();
-                }, 90000);
+                }, 30000);
             }
         }, 500);
     }
@@ -233,6 +257,10 @@ class MainScene extends Phaser.Scene {
             clearTimeout(this.waveTimer);
             this.level += 1;
             this.spwanWave();
+        }
+
+        if (this.enemys.getChildren().length > 80) {
+            this.game.gameover();
         }
     }
 }

@@ -19,7 +19,6 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         this.on(
             'animationcomplete',
             () => {
-                console.log('complete');
                 this.attack();
             },
             this
@@ -32,6 +31,7 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         this.level = 0;
         this.range = this.scene.game.tile.width + 20;
         this.radius = this.scene.game.tile.width;
+        this.type = 'normal';
         this.attackDamage = 3;
         this.attackDelay = 500;
         this.projectileSpeed = 500;
@@ -85,9 +85,8 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
             projectile.radius = this.radius;
             projectile.fire(this.rangeArea.x, this.rangeArea.y, angle, this.projectileSpeed);
         }
-        this.attackTimer = setTimeout(() => {
-            this.attack();
-        }, this.attackDelay);
+
+        this.timerEvent = this.scene.time.delayedCall(this.attackDelay, () => this.attack());
     }
 
     levelUp() {
@@ -115,7 +114,6 @@ class RangeCircle extends Phaser.GameObjects.Zone {
         this.setOrigin(0.5, 0.5);
         this.setInteractive();
         this.parent = parent;
-        this.radius = parent.range;
 
         this.enemiesInRange = new Set();
 
@@ -127,7 +125,7 @@ class RangeCircle extends Phaser.GameObjects.Zone {
         this.scene.physics.add.overlap(this.scene.enemys, this, (enemy, range) => {
             if (!this.enemiesInRange.has(enemy)) {
                 this.enemiesInRange.add(enemy);
-                // enemy.setTint(0xff0000, 0.1);
+                enemy.setTint(0xff0000, 0.1);
             }
         });
 
@@ -149,10 +147,16 @@ class RangeCircle extends Phaser.GameObjects.Zone {
         for (const enemy of this.enemiesInRange) {
             if (!enemy.alive) this.enemiesInRange.delete(enemy);
 
-            const distance = Phaser.Math.Distance.Between(this.parent.parent.x, this.parent.parent.y, enemy.x, enemy.y);
-            if (distance > this.radius) {
+            const distance = Phaser.Math.Distance.Between(
+                this.parent.parent.x + this.scene.game.tile.width / 2,
+                this.parent.parent.y + this.scene.game.tile.height / 2,
+                enemy.x,
+                enemy.y
+            );
+
+            if (distance > this.parent.range * 2) {
                 this.enemiesInRange.delete(enemy);
-                // enemy.clearTint();
+                enemy.clearTint();
             }
         }
     }
