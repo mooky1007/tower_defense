@@ -1,6 +1,6 @@
 import Projectile from './Projectile.js';
 
-class Tower extends Phaser.Physics.Arcade.Sprite {
+class Tower extends Phaser.GameObjects.Sprite {
     constructor(type = 'normal', scene, x, y, parent) {
         super(scene, x, y, 'tower');
         this.name = 'tower';

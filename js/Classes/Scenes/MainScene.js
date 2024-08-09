@@ -15,7 +15,6 @@ class MainScene extends Phaser.Scene {
         this.level = 0;
     }
 
-    // 외부 파일 혹은 assets을 미리 불러오기 위한 작업 처리
     preload() {
         this.load.spritesheet('tower', 'assets/tower/1.png', {
             frameWidth: 70,
@@ -55,7 +54,8 @@ class MainScene extends Phaser.Scene {
 
         background.setOrigin(0, 0);
         background.setDepth(-10);
-        background.setDisplaySize(width, height);
+        background.setPosition(0, this.game.tile.height);
+        background.setDisplaySize(width, this.game.tile.height * 11);
         background.setTexture('grass'); // 텍스처 설정
 
         this.towers = this.add.group();
@@ -63,65 +63,17 @@ class MainScene extends Phaser.Scene {
         this.enemys = this.add.group();
         this.zones = this.add.group();
 
-        new DecoTile(this, 2, 1, 'dirty05');
-        new DecoTile(this, 3, 1, 'dirty01');
-        new DecoTile(this, 4, 1, 'dirty01');
-        new DecoTile(this, 5, 1, 'dirty01');
-        new DecoTile(this, 6, 1, 'dirty01');
-        new DecoTile(this, 7, 1, 'dirty01');
-        new DecoTile(this, 8, 1, 'dirty01');
-
-        new DecoTile(this, 8, 1, 'dirty06');
-        new DecoTile(this, 8, 2, 'dirty03');
-        new DecoTile(this, 8, 3, 'dirty03');
-        new DecoTile(this, 8, 4, 'dirty03');
-        new DecoTile(this, 8, 5, 'dirty03');
-        new DecoTile(this, 8, 6, 'dirty03');
-        new DecoTile(this, 8, 7, 'dirty02');
-        new DecoTile(this, 2, 2, 'dirty03');
-        new DecoTile(this, 2, 3, 'dirty03');
-        new DecoTile(this, 2, 4, 'dirty03');
-        new DecoTile(this, 2, 5, 'dirty03');
-        new DecoTile(this, 2, 6, 'dirty03');
-        new DecoTile(this, 2, 7, 'dirty04');
-        new DecoTile(this, 3, 7, 'dirty01');
-        new DecoTile(this, 4, 7, 'dirty01');
-        new DecoTile(this, 5, 7, 'dirty01');
-        new DecoTile(this, 6, 7, 'dirty01');
-        new DecoTile(this, 7, 7, 'dirty01');
-
         new DecoTile(this, 3, 2, 'grass06', false);
         new DecoTile(this, 4, 2, 'grass03', false);
-        new DecoTile(this, 5, 2, 'grass06', false);
-        new DecoTile(this, 6, 2, 'grass03', false);
-        new DecoTile(this, 7, 2, 'grass06', false);
 
-        new DecoTile(this, 3, 3, 'grass03', false);
-        new DecoTile(this, 4, 3, 'grass06', false);
-        new DecoTile(this, 5, 3, 'grass03', false);
-        new DecoTile(this, 6, 3, 'grass06', false);
-        new DecoTile(this, 7, 3, 'grass03', false);
+        for (let i = 0; i <= 10; i++) {
+            for (let j = 1; j <= 11; j++) {
+                new DecoTile(this, i, j, `grass0${(i + j) % 2 === 0 ? Math.floor(Math.random() * 3 + 1) : Math.floor(Math.random() * 3 + 3)}`, false);
+            }
+        }
 
-        new DecoTile(this, 3, 4, 'grass06', false);
-        new DecoTile(this, 4, 4, 'grass03', false);
-        new DecoTile(this, 5, 4, 'grass06', false);
-        new DecoTile(this, 6, 4, 'grass03', false);
-        new DecoTile(this, 7, 4, 'grass06', false);
-
-        new DecoTile(this, 3, 5, 'grass03', false);
-        new DecoTile(this, 4, 5, 'grass06', false);
-        new DecoTile(this, 5, 5, 'grass03', false);
-        new DecoTile(this, 6, 5, 'grass06', false);
-        new DecoTile(this, 7, 5, 'grass03', false);
-
-        new DecoTile(this, 3, 6, 'grass06', false);
-        new DecoTile(this, 4, 6, 'grass03', false);
-        new DecoTile(this, 5, 6, 'grass06', false);
-        new DecoTile(this, 6, 6, 'grass03', false);
-        new DecoTile(this, 7, 6, 'grass06', false);
-
-        for (let i = 2; i <= 6; i++) {
-            for (let j = 3; j <= 7; j++) {
+        for (let i = 2; i <= 10; i++) {
+            for (let j = 1; j <= 9; j++) {
                 this.zones.add(new ZoneTile(this, j, i));
             }
         }
@@ -134,49 +86,17 @@ class MainScene extends Phaser.Scene {
         this.physics.add.collider(this.enemys, this.topArea);
         this.physics.add.collider(this.projectiles, this.topArea, (projectile) => projectile.destroy());
 
-        this.add.graphics().fillStyle('0x000000', 1).fillRect(0, 0, width, this.game.tile.width);
-
-        this.bottomArea = this.add.zone(0, this.game.tile.height * 8, width, this.game.tile.height * 3);
+        this.bottomArea = this.add.zone(0, this.game.tile.height * 12, width, this.game.tile.height * 4);
         this.bottomArea.setOrigin(0, 0);
         this.physics.add.existing(this.bottomArea);
         this.bottomArea.body.allowGravity = false;
         this.bottomArea.body.immovable = true;
         this.physics.add.collider(this.enemys, this.bottomArea);
         this.physics.add.collider(this.projectiles, this.bottomArea, (projectile) => projectile.destroy());
-        this.add
-            .graphics()
-            .fillStyle('0x000000', 1)
-            .fillRect(0, this.game.tile.height * 8, width, this.game.tile.height * 3);
-
-        this.leftArea = this.add.zone(0, 0, this.game.tile.width * 2, this.game.tile.height * 8);
-        this.leftArea.setOrigin(0, 0);
-        this.physics.add.existing(this.leftArea);
-        this.leftArea.body.allowGravity = false;
-        this.leftArea.body.immovable = true;
-        this.physics.add.collider(this.enemys, this.leftArea);
-        this.physics.add.collider(this.projectiles, this.leftArea, (projectile) => projectile.destroy());
-        this.add
-            .graphics()
-            .fillStyle('0x000000', 1)
-            .fillRect(0, 0, this.game.tile.width * 2, this.game.tile.height * 8);
-
-        this.rightArea = this.add.zone(this.game.tile.width * 9, 0, width, this.game.tile.height * 8);
-        this.rightArea.setOrigin(0, 0);
-        this.physics.add.existing(this.rightArea);
-        this.rightArea.body.allowGravity = false;
-        this.rightArea.body.immovable = true;
-        this.physics.add.collider(this.enemys, this.rightArea);
-        this.physics.add.collider(this.projectiles, this.rightArea, (projectile) => projectile.destroy());
-        this.add
-            .graphics()
-            .fillStyle('0x000000', 1)
-            .fillRect(this.game.tile.width * 9, 0, width, this.game.tile.height * 8);
 
         this.towers.runChildUpdate = true;
         this.projectiles.runChildUpdate = true;
         this.enemys.runChildUpdate = true;
-
-        this.towerUI = new TowerUI(this, 0, 0);
 
         this.goldText = this.add.text(width - 20, 10, `${this.gold} Gold`);
         this.goldText.setOrigin(1, 0);

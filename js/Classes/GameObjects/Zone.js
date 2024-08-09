@@ -1,3 +1,4 @@
+import TowerUI from '../UI/TowerUI.js';
 import Tower from './Tower.js';
 
 class ZoneTile extends Phaser.GameObjects.Zone {
@@ -34,17 +35,24 @@ class ZoneTile extends Phaser.GameObjects.Zone {
             'pointerdown',
             () => {
                 if (this.state === 'selected') {
-                    if (this.isTower) {
-                        this.tower.levelUp();
-                        this.tower.update();
-                    }
-                } else {
                     this.scene.zones?.selected?.destroy();
                     this.scene.zones.getChildren().forEach((zone) => {
                         zone.state = 'normal';
                     });
-                    this.state = 'selected';
+                    this.scene.towerUI.destroy();
                     this.update();
+                } else {
+                    if (this.tower) {
+                    } else {
+                        this.scene?.towerUI?.destroy();
+                        this.scene.towerUI = new TowerUI(this.scene, 0, 0);
+                        this.scene.zones?.selected?.destroy();
+                        this.scene.zones.getChildren().forEach((zone) => {
+                            zone.state = 'normal';
+                        });
+                        this.state = 'selected';
+                        this.update();
+                    }
                 }
             },
             this
@@ -73,15 +81,12 @@ class ZoneTile extends Phaser.GameObjects.Zone {
 
     installTower(type) {
         if (this.isTower) return;
-        if (this.scene.gold < 50) {
-            this.state = 'normal';
-            this.update();
-            return;
-        }
+        if (this.scene.gold < 50) return;
         this.scene.gold -= 50;
         this.isTower = true;
         this.tower = new Tower(type, this.scene, this.x + this.width / 2, this.y + this.height / 2, this);
         this.tower.setPosition(this.tower.x, this.tower.y - (this.tower.height - this.height) / 2);
+        this.scene?.towerUI?.destroy();
     }
 
     update() {

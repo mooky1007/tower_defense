@@ -2,78 +2,53 @@ class TowerUI extends Phaser.GameObjects.Container {
     constructor(scene, x, y) {
         super(scene, x, y);
 
-        this.setSize(scene.game.config.width, scene.game.config.height);
-        this.setPosition(scene.game.tile.width * 2, scene.game.tile.height * 8 + 20);
+        this.setSize(scene.game.config.width - 40, scene.game.config.height);
+        this.setPosition(20, scene.game.tile.height * 12 + 20);
 
         const cardCount = 4;
         const gap = 20;
 
         const totalGapSzie = gap * (cardCount - 1);
-        const cardWidth = (scene.game.config.width - totalGapSzie - scene.game.tile.width * 4) / 4;
+        const cardWidth = (scene.game.config.width - totalGapSzie - 40) / 4;
 
-        this.box = new TowerButton(scene, 0, 0, cardWidth, 150, 0xff0000, 1, this);
-        this.box2 = new TowerButton(scene, cardWidth + gap, 0, cardWidth, 150, 0xff0000, 1, this);
-        this.box3 = new TowerButton(scene, cardWidth * 2 + gap * 2, 0, cardWidth, 150, 0xff0000, 1, this);
-        this.box4 = new TowerButton(scene, cardWidth * 3 + gap * 3, 0, cardWidth, 150, 0xff0000, 1, this);
-
-        this.add([this.box, this.box2, this.box3, this.box4]);
-
-        this.box.addText('normal, 50');
-        this.box2.addText('expolstion, 75');
-        this.box3.addText('long, 100');
-        this.box4.addText('fast, 25');
-
-        this.box.on(
-            'pointerdown',
-            () => this.scene.zones
-                .getChildren()
-                .find((zone) => zone.state === 'selected')
-                .installTower('normal'),
-            this
-        );
-
-        this.box2.on(
-            'pointerdown',
-            () => this.scene.zones
-                .getChildren()
-                .find((zone) => zone.state === 'selected')
-                .installTower('explosion'),
-            this
-        );
-
-        this.box3.on(
-          'pointerdown',
-          () => this.scene.zones
-              .getChildren()
-              .find((zone) => zone.state === 'selected')
-              .installTower('long'),
-          this
-      );
-
-      this.box4.on(
-        'pointerdown',
-        () => this.scene.zones
-            .getChildren()
-            .find((zone) => zone.state === 'selected')
-            .installTower('fase'),
-        this
-    );
+        for (let i = 0; i < cardCount; i++) {
+            new InstallTowerButton(scene, cardWidth * i + gap * i, 0, cardWidth, 150, this);
+        }
 
         this.scene.add.existing(this);
     }
 }
 
-class TowerButton extends Phaser.GameObjects.Rectangle {
-    constructor(scene, x, y, width, height, fillColor, alpha, parent) {
-        super(scene, x, y, width, height, fillColor, alpha);
-        this.setInteractive();
+class InstallTowerButton extends Phaser.GameObjects.Container {
+    constructor(scene, x, y, width, height, parent) {
+        super(scene, x, y);
+        this.setSize(width, height);
         this.parent = parent;
+        this.setInteractive();
         this.scene.add.existing(this);
-        this.setOrigin(0, 0);
-    }
+        this.parent.add(this);
 
-    addText(text) {
-        this.scene.add.text(this.x + this.parent.x, this.y + this.parent.y, `${text}`, 0xffffff).setDepth(this.depth + 1);
+        this.setPosition(this.x + this.width / 2, this.y + this.height / 2);
+
+        this.background = this.scene.add.rectangle(-this.width / 2, -this.height / 2, this.width, this.height, 0xffffff);
+        this.background.setOrigin(0, 0);
+        this.add(this.background);
+
+        this.text = this.scene.add.text(-this.width / 2, -this.height / 2, 'hello ', { color: '#000000' });
+        this.text2 = this.scene.add.text(-this.width / 2, -this.height / 2 + this.text.height, 'phaser', { color: '#000000' });
+        this.add([this.text, this.text2]);
+        this.text.setDepth(this.background.depth + 1);
+
+        this.on(
+            'pointerdown',
+            () => {
+                this.scene.zones
+                    .getChildren()
+                    .find((zone) => zone.state === 'selected')
+                    .installTower('normal');
+            },
+            this
+        );
     }
 }
 
