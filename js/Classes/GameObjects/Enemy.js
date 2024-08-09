@@ -52,11 +52,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.anims.play('right');
 
-        this.setCollideWorldBounds(true);
-        this.body.velocity.set(this.speed, 0);
+        this.path = this.scene.gameScreen.path;
 
+        // this.setCollideWorldBounds(true);
         this.hpBar = this.scene.add.rectangle(this.x, this.y + this.height / 3, this.scene.game.tile.width / 4 + 2, 3, 0x000000);
         this.hpBar.setOrigin(0.5, 0.5);
+
+        this.setVelocity(this.speed, 0);
 
         this.hpBarInner = this.scene.add.rectangle(this.x, this.y + this.height / 3, this.scene.game.tile.width / 4, 2, 0xff0000);
         this.hpBarInner.setOrigin(0.5, 0.5);
@@ -64,21 +66,46 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     update() {
         if (this.alive) {
+            this.temp += 1;
             this.hpBar.setPosition(this.x, this.y + this.height / 3);
             this.hpBarInner.setPosition(this.x, this.y + this.height / 3);
-            if (this.body.blocked.right) {
-                this.anims.play('left');
-                this.body.velocity.y = this.speed; // turn left
-            } else if (this.body.blocked.left) {
-                this.anims.play('right');
-                this.body.velocity.y = -this.speed; // turn right
-            } else if (this.body.blocked.down) {
-                this.anims.play('left');
-                this.body.velocity.x = -this.speed; // turn right
-            } else if (this.body.blocked.up) {
-                this.anims.play('right');
-                this.body.velocity.x = this.speed; // turn right
+
+            const {
+                speed,
+                body: { blocked },
+            } = this;
+
+            if (blocked.right) {
+                this.setVelocity(0, speed);
+                if (this.body.wasTouching.down) {
+                    this.setVelocity(0, -speed);
+                }
             }
+
+            if (blocked.down) {
+                this.setVelocity(-speed, 0);
+                if (this.body.wasTouching.right) {
+                    this.setVelocity(0, -speed);
+                }
+            }
+
+            if (blocked.left) {
+                this.setVelocity(0, -speed);
+                if (this.body.wasTouching.down) {
+                    this.setVelocity(speed, 0);
+                }
+            }
+
+            if (blocked.up) {
+                this.setVelocity(speed, 0);
+                if (this.body.wasTouching.left) {
+                    this.setVelocity(0, speed);
+                }
+            }
+        }
+
+        if (this.x > this.scene.game.config.width) {
+          this.destroy();
         }
     }
 

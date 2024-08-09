@@ -13,6 +13,8 @@ class ZoneTile extends Phaser.GameObjects.Zone {
         this.setObject();
         this.setInputs();
 
+        this.scene.add.text(this.x, this.y + scene.game.tile.height, `${x}, ${y}`)
+
         this.init();
     }
 
@@ -24,9 +26,8 @@ class ZoneTile extends Phaser.GameObjects.Zone {
 
     setPhysics() {
         this.scene.physics.add.existing(this);
-
+        this.body.immovable = true;
         this.body.allowGravity = false;
-        this.body.setCollideWorldBounds(true);
     }
 
     setInputs() {
@@ -79,19 +80,20 @@ class ZoneTile extends Phaser.GameObjects.Zone {
         );
     }
 
-    installTower(type) {
+    installTower(towerConfig) {
+        console.log(towerConfig);
         if (this.isTower) return;
         if (this.scene.gold < 50) return;
         this.scene.gold -= 50;
         this.isTower = true;
-        this.tower = new Tower(type, this.scene, this.x + this.width / 2, this.y + this.height / 2, this);
+        this.tower = new Tower(towerConfig, this.scene, this.x + this.width / 2, this.y + this.height / 2 + this.height, this);
         this.tower.setPosition(this.tower.x, this.tower.y - (this.tower.height - this.height) / 2);
         this.scene?.towerUI?.destroy();
     }
 
     update() {
         if (this.state === 'selected') {
-            this.scene.zones.selected = this.scene.add.rectangle(this.x, this.y, this.width, this.height, 0xffffff, 0.3);
+            this.scene.zones.selected = this.scene.add.rectangle(this.x, this.y + this.height, this.width, this.height, 0xffffff, 0.3);
             this.scene.zones.selected.setStrokeStyle(3, 0xffffff, 0.4);
             this.scene.zones.selected.setOrigin(0, 0);
         } else {

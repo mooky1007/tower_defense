@@ -9,8 +9,8 @@ class DecoTile extends Phaser.GameObjects.Image {
         } else {
             this.setSize(scene.game.tile.width, scene.game.tile.height);
 
-            const ranX = scene.game.tile.width / 2 + Math.floor((Math.random() * scene.game.tile.width * 0.8) / 2) * (Math.random() < 0.5 ? 1 : -1);
-            const ranY = scene.game.tile.height / 2 + Math.floor((Math.random() * scene.game.tile.height * 0.8) / 2) * (Math.random() < 0.5 ? 1 : -1);
+            const ranX = scene.game.tile.width / 2 + Math.floor((Math.random() * scene.game.tile.width * 0.6) / 2) * (Math.random() < 0.5 ? 1 : -1);
+            const ranY = scene.game.tile.height / 2 + Math.floor((Math.random() * scene.game.tile.height * 0.6) / 2) * (Math.random() < 0.5 ? 1 : -1);
 
             this.setPosition(this.x + ranX, this.y + ranY);
         }

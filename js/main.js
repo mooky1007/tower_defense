@@ -15,6 +15,7 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
     },
+    // parent: 'game',
 };
 
 class App extends Phaser.Game {
@@ -33,10 +34,6 @@ class App extends Phaser.Game {
         document.addEventListener('contextmenu', function (event) {
             event.preventDefault(); // 기본 컨텍스트 메뉴의 표시를 막습니다.
         });
-    }
-
-    gameover() {
-        this.isPaused = true;
     }
 }
 

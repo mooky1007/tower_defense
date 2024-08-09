@@ -3,6 +3,7 @@ import DecoTile from '../GameObjects/DecoTile.js';
 import Enemy from '../GameObjects/Enemy.js';
 import Star from '../GameObjects/Tower.js';
 import ZoneTile from '../GameObjects/Zone.js';
+import GameScreen from '../GameScreen.js';
 import TowerUI from '../UI/TowerUI.js';
 
 class MainScene extends Phaser.Scene {
@@ -48,35 +49,16 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        const { width, height } = this.game.config;
-
-        const background = this.add.image(0, 0, 'background');
-
-        background.setOrigin(0, 0);
-        background.setDepth(-10);
-        background.setPosition(0, this.game.tile.height);
-        background.setDisplaySize(width, this.game.tile.height * 11);
-        background.setTexture('grass'); // 텍스처 설정
-
+        const {
+            config: { width },
+            tile,
+        } = this.game;
+        this.zones = this.add.group();
         this.towers = this.add.group();
         this.projectiles = this.add.group();
         this.enemys = this.add.group();
-        this.zones = this.add.group();
 
-        new DecoTile(this, 3, 2, 'grass06', false);
-        new DecoTile(this, 4, 2, 'grass03', false);
-
-        for (let i = 0; i <= 10; i++) {
-            for (let j = 1; j <= 11; j++) {
-                new DecoTile(this, i, j, `grass0${(i + j) % 2 === 0 ? Math.floor(Math.random() * 3 + 1) : Math.floor(Math.random() * 3 + 3)}`, false);
-            }
-        }
-
-        for (let i = 2; i <= 10; i++) {
-            for (let j = 1; j <= 9; j++) {
-                this.zones.add(new ZoneTile(this, j, i));
-            }
-        }
+        this.gameScreen = new GameScreen(this, 0, tile.height);
 
         this.topArea = this.add.zone(0, 0, width, this.game.tile.width);
         this.topArea.setOrigin(0, 0);
@@ -93,7 +75,7 @@ class MainScene extends Phaser.Scene {
         this.bottomArea.body.immovable = true;
         this.physics.add.collider(this.enemys, this.bottomArea);
         this.physics.add.collider(this.projectiles, this.bottomArea, (projectile) => projectile.destroy());
-
+        this.physics.add.collider(this.enemys, this.zones)
         this.towers.runChildUpdate = true;
         this.projectiles.runChildUpdate = true;
         this.enemys.runChildUpdate = true;
@@ -148,6 +130,7 @@ class MainScene extends Phaser.Scene {
             }
         });
 
+        // this.enemys.add(new Enemy(this, 0, 0, { level: this.level }));
         this.spwanWave();
     }
 
@@ -178,11 +161,32 @@ class MainScene extends Phaser.Scene {
             this.level += 1;
             this.spwanWave();
         }
-
-        if (this.enemys.getChildren().length > 80) {
-            this.game.gameover();
-        }
+        // if (this.enemys.getChildren().length > 40) {
+        //     this.gameover();
+        // }
     }
+
+    // gameover() {
+    //     const rect = this.add.rectangle(0, this.game.tile.height, this.game.tile.width * 11, this.game.tile.height * 11, 0x000000, 0.8);
+    //     rect.setOrigin(0, 0);
+    //     this.add.text(rect.x + rect.width / 2, rect.y + rect.height / 2, 'Game Over', { color: '#fff', fontSize: 24 }).setOrigin(0.5, 0.5);
+
+    //     console.log(this);
+    //     const a = this.add.dom(400, 400, 'div', 'background-color: lime; width: 220px; height: 100px; font: 48px Arial', 'Phaser');
+    //     console.log();
+
+    //     rect.setInteractive();
+
+    //     rect.on(
+    //         'pointerdown',
+    //         () => {
+    //             this.scene.restart();
+    //         },
+    //         this
+    //     );
+
+    //     this.scene.pause();
+    // }
 }
 
 export default MainScene;

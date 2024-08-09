@@ -1,11 +1,10 @@
 import Projectile from './Projectile.js';
 
 class Tower extends Phaser.GameObjects.Sprite {
-    constructor(type = 'normal', scene, x, y, parent) {
+    constructor(config, scene, x, y, parent) {
         super(scene, x, y, 'tower');
         this.name = 'tower';
-        this.type = type;
-        this.setTowerData();
+        this.setTowerData(config);
         this.attackTimer = null;
         this.parent = parent;
 
@@ -17,18 +16,16 @@ class Tower extends Phaser.GameObjects.Sprite {
         });
 
         this.anims.play('install');
-        this.on(
-            'animationcomplete',
-            () => {
-                this.attack();
-            },
-            this
-        );
+        this.on('animationcomplete', this.attack);
 
         this.init();
     }
 
-    setTowerData() {
+    setTowerData(config) {
+        console.log(config);
+        const { type } = config;
+        this.type = type;
+
         this.level = 0;
         this.range = this.scene.game.tile.width + 20;
         this.radius = this.scene.game.tile.width;
@@ -48,19 +45,19 @@ class Tower extends Phaser.GameObjects.Sprite {
         }
 
         if (this.type === 'long') {
-          console.log('a');
-          this.attackDamage = 10;
-          this.range = this.scene.game.tile.width * 3;
-          this.setTint(0x00ff00, 0xffffff, 0xffffff, 0xffffff);
-      }
+            console.log('a');
+            this.attackDamage = 10;
+            this.range = this.scene.game.tile.width * 3;
+            this.setTint(0x00ff00, 0xffffff, 0xffffff, 0xffffff);
+        }
 
-      if (this.type === 'fast') {
-        console.log('a');
-        this.attackDamage = 1;
-        this.attackDelay = 100
-        this.range = this.scene.game.tile.width;
-        this.setTint(0x0000ff, 0xffffff, 0xffffff, 0xffffff);
-    }
+        if (this.type === 'fast') {
+            console.log('a');
+            this.attackDamage = 1;
+            this.attackDelay = 100;
+            this.range = this.scene.game.tile.width;
+            this.setTint(0x0000ff, 0xffffff, 0xffffff, 0xffffff);
+        }
 
         this.maximumProjectileSpeed = 3000;
     }
@@ -150,7 +147,7 @@ class RangeCircle extends Phaser.GameObjects.Zone {
         this.scene.physics.add.overlap(this.scene.enemys, this, (enemy, range) => {
             if (!this.enemiesInRange.has(enemy)) {
                 this.enemiesInRange.add(enemy);
-                // enemy.setTint(0xff0000, 0.1);
+                enemy.setTint(0xff0000, 0.1);
             }
         });
 
@@ -179,9 +176,9 @@ class RangeCircle extends Phaser.GameObjects.Zone {
                 enemy.y
             );
 
-            if (distance > this.parent.range * 2) {
-                this.enemiesInRange.delete(enemy);
+            if (distance > this.parent.range + 20) {
                 enemy.clearTint();
+                this.enemiesInRange.delete(enemy);
             }
         }
     }
