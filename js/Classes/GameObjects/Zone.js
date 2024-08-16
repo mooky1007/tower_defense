@@ -1,12 +1,13 @@
 import Tower from './Tower.js';
+import TowerUI from '../UI/TowerUI.js';
 
 class ZoneTile extends Phaser.GameObjects.Zone {
-    constructor(scene, x, y) {
+    constructor(scene, x, y, parent) {
         super(scene, scene.game.tile.width * x, scene.game.tile.height * y, scene.game.tile.width, scene.game.tile.height);
-
+        this.parent = parent;
         this.center = {
             x: this.x + scene.game.tile.width / 2,
-            y: this.y + scene.game.tile.height + scene.game.tile.height / 2,
+            y: this.y + scene.game.tile.height / 2,
         };
 
         this.setPhysics();
@@ -16,7 +17,18 @@ class ZoneTile extends Phaser.GameObjects.Zone {
         this.init();
     }
 
-    init() {}
+    init() {
+        const a = this.scene.add.graphics();
+        a.fillStyle(0xff0000);
+        a.fillCircle(this.center.x, this.center.y, 3);
+        a.lineStyle(1, 0xff0000);
+        a.strokeRect(this.x, this.y, this.width, this.height);
+        a.setVisible(false);
+
+        this.parent.add(a);
+
+        this.dot = a;
+    }
 
     setObject() {
         this.setOrigin(0, 0);
@@ -31,16 +43,12 @@ class ZoneTile extends Phaser.GameObjects.Zone {
     setInputs() {
         this.setInteractive();
         this.on('pointerdown', () => {
-            const a = this.scene.add.graphics();
-            a.fillStyle(0xff0000);
-            a.fillCircle(this.center.x, this.center.y, 3);
-
-            const b = this.scene.add.rectangle(this.center.x, this.center.y);
-            this.scene.physics.add.existing(b);
-            b.body.immovable = true;
-            b.body.allowGravity = false;
-            b.body.setCircle(10);
-            b.setPosition(this.center.x, this.center.y)
+            this.dot.setVisible(!this.dot.visible);
+            if (this.dot.visible) {
+              this.scene.towerUI = new TowerUI(this.scene, 0, 0);
+            }else{
+              this.scene.towerUI.destroy();
+            }
         });
     }
 

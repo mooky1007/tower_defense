@@ -24,32 +24,27 @@ class GameScreen extends Phaser.GameObjects.Container {
         this.createTowerZoneBox(-1, 8, -1, 10);
         this.createTowerZoneBox(11, 0);
 
-        this.createLoadZoneBox('dirty01', 0, 0, 1, 0);
-        this.createLoadZoneBox('dirty01', 3, 4, 6, 4);
-        this.createLoadZoneBox('dirty01', 8, 0, 9, 0);
-        this.createLoadZoneBox('dirty01', 6, 6, 9, 6);
-        this.createLoadZoneBox('dirty01', 1, 8, 4, 8);
-        this.createLoadZoneBox('dirty01', 1, 10, 10, 10);
-
-        this.createLoadZoneBox('dirty02', 7, 4, 7, 4);
-        this.createLoadZoneBox('dirty02', 10, 6, 10, 6);
-        this.createLoadZoneBox('dirty02', 5, 8, 5, 8);
-
-        this.createLoadZoneBox('dirty03', 2, 1, 2, 3);
-        this.createLoadZoneBox('dirty03', 7, 1, 7, 3);
-        this.createLoadZoneBox('dirty03', 10, 1, 10, 5);
-        this.createLoadZoneBox('dirty03', 5, 7, 5, 7);
-        this.createLoadZoneBox('dirty03', 0, 9, 0, 9);
-
-        this.createLoadZoneBox('dirty04', 2, 4);
-        this.createLoadZoneBox('dirty04', 0, 10);
-
-        this.createLoadZoneBox('dirty05', 0, 8);
-        this.createLoadZoneBox('dirty05', 5, 6);
-        this.createLoadZoneBox('dirty05', 7, 0);
-
-        this.createLoadZoneBox('dirty06', 2, 0);
-        this.createLoadZoneBox('dirty06', 10, 0);
+        this.createLoadZoneBox('grass2', 0, 0, 1, 0);
+        this.createLoadZoneBox('grass2', 3, 4, 6, 4);
+        this.createLoadZoneBox('grass2', 8, 0, 9, 0);
+        this.createLoadZoneBox('grass2', 6, 6, 9, 6);
+        this.createLoadZoneBox('grass2', 1, 8, 4, 8);
+        this.createLoadZoneBox('grass2', 1, 10, 10, 10);
+        this.createLoadZoneBox('grass2', 7, 4, 7, 4);
+        this.createLoadZoneBox('grass2', 10, 6, 10, 6);
+        this.createLoadZoneBox('grass2', 5, 8, 5, 8);
+        this.createLoadZoneBox('grass2', 2, 1, 2, 3);
+        this.createLoadZoneBox('grass2', 7, 1, 7, 3);
+        this.createLoadZoneBox('grass2', 10, 1, 10, 5);
+        this.createLoadZoneBox('grass2', 5, 7, 5, 7);
+        this.createLoadZoneBox('grass2', 0, 9, 0, 9);
+        this.createLoadZoneBox('grass2', 2, 4);
+        this.createLoadZoneBox('grass2', 0, 10);
+        this.createLoadZoneBox('grass2', 0, 8);
+        this.createLoadZoneBox('grass2', 5, 6);
+        this.createLoadZoneBox('grass2', 7, 0);
+        this.createLoadZoneBox('grass2', 2, 0);
+        this.createLoadZoneBox('grass2', 10, 0);
 
         this.selectedZone = this.scene.add.graphics();
         this.add(this.selectedZone);
@@ -71,6 +66,42 @@ class GameScreen extends Phaser.GameObjects.Container {
         this.scene.physics.add.collider(this.scene.projectiles, this.topArea, (projectile) => projectile.destroy());
         this.scene.physics.add.collider(this.scene.projectiles, this.bottomArea, (projectile) => projectile.destroy());
 
+        const axeMan = this.scene.add.sprite(tile.width * 6 + tile.width / 2, tile.height * 4 + tile.height / 2 - 15, 'axe_man');
+        axeMan.setDepth = 8;
+        axeMan.anims.create({
+            key: 'idle',
+            frames: axeMan.anims.generateFrameNumbers('axe_man', { start: 0, end: 3 }),
+            frameRate: 6,
+            repeat: -1, // 무한 반복을 의미
+        });
+
+        axeMan.anims.create({
+            key: 'attack',
+            frames: axeMan.anims.generateFrameNumbers('axe_man2', { start: 0, end: 4 }),
+            frameRate: 12,
+            repeat: 0, // 무한 반복을 의미
+        });
+        axeMan.play('idle');
+        axeMan.setSize(tile.width, tile.height);
+
+        const swMan = this.scene.add.sprite(tile.width * 5 + tile.width / 2, tile.height * 4 + tile.height / 2 - 15, 'sword_man');
+        swMan.setDepth = 8;
+        swMan.anims.create({
+            key: 'idle',
+            frames: swMan.anims.generateFrameNumbers('sword_man', { start: 0, end: 3 }),
+            frameRate: 6,
+            repeat: -1, // 무한 반복을 의미
+        });
+
+        swMan.anims.create({
+            key: 'attack',
+            frames: swMan.anims.generateFrameNumbers('sword_man2', { start: 0, end: 3 }),
+            frameRate: 12,
+            repeat: 0, // 무한 반복을 의미
+        });
+        swMan.play('idle');
+        swMan.setSize(tile.width, tile.height);
+
         this.timer = new Timer(scene, 90);
         this.monsterCount = new MonsterCount(scene);
 
@@ -88,7 +119,7 @@ class GameScreen extends Phaser.GameObjects.Container {
     createTowerZoneBox(x1, y1, x2 = x1, y2 = y1) {
         for (let i = y1; i <= y2; i++) {
             for (let j = x1; j <= x2; j++) {
-                const zone = new ZoneTile(this.scene, j, i);
+                const zone = new ZoneTile(this.scene, j, i, this);
                 this.add(zone);
                 this.scene.zones.add(zone);
             }

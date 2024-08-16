@@ -11,41 +11,28 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('tower', 'assets/tower/1.png', {
-            frameWidth: 70,
-            frameHeight: 130,
-        });
+        const frame64 = { frameWidth: 64, frameHeight: 64 };
 
-        this.load.image('projectile', 'assets/arrow.png');
-        this.load.image('dirty01', 'assets/tileset/FieldsTile_30.png');
-        this.load.image('dirty02', 'assets/tileset/FieldsTile_28.png');
-        this.load.image('dirty03', 'assets/tileset/FieldsTile_32.png');
-        this.load.image('dirty04', 'assets/tileset/FieldsTile_26.png');
-        this.load.image('dirty05', 'assets/tileset/FieldsTile_10.png');
-        this.load.image('dirty06', 'assets/tileset/FieldsTile_12.png');
+        this.load.spritesheet('axe_man', 'assets/axe_man.png', frame64);
+        this.load.spritesheet('axe_man2', 'assets/axe_man2.png', frame64);
+        this.load.spritesheet('sword_man', 'assets/sword_man.png', frame64);
+        this.load.spritesheet('sword_man2', 'assets/sword_man2.png', frame64);
+        this.load.spritesheet('blackslime', 'assets/blackslime.png', frame64);
 
-        this.load.image('grass', 'assets/tileset/work_grass.png');
+        this.load.audio('bgm', 'assets/bgm.mp3');
 
-        this.load.image('grass01', 'assets/grass/1.png');
-        this.load.image('grass02', 'assets/grass/2.png');
-        this.load.image('grass03', 'assets/grass/3.png');
-        this.load.image('grass04', 'assets/grass/4.png');
-        this.load.image('grass05', 'assets/grass/5.png');
-        this.load.image('grass06', 'assets/grass/6.png');
-
-        this.load.image('swordman', 'assets/swordman.png');
-
-        this.load.spritesheet('slime', 'assets/S_Walk.png', {
-            frameWidth: 48,
-            frameHeight: 48,
-        });
-        this.load.spritesheet('slime_death', 'assets/S_Death.png', {
-            frameWidth: 48,
-            frameHeight: 48,
-        });
+        this.load.image('grass', 'assets/grey_bottom.png');
+        this.load.image('grass2', 'assets/grey_bottom2.png');
     }
 
     create() {
+        const bgm = this.sound.add('bgm', {
+            loop: true, // BGM을 반복 재생하도록 설정
+            volume: 0.5, // 볼륨 조절 (0.0부터 1.0까지)
+        });
+
+        bgm.play();
+
         const { tile } = this.game;
         this.zones = this.add.group();
         this.towers = this.add.group();

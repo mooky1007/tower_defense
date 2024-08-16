@@ -27,8 +27,11 @@ class Monster extends Phaser.GameObjects.Container {
         this.scene.enemys.add(this);
         this.body.setVelocity(this.speed, 0);
 
-        this.sprite = new Sprite(this.scene, x, y, 'swordman');
-        this.sprite.setPosition(this.sprite.x, this.sprite.y - 8)
+        this.sprite = new Sprite(this.scene, x, y, 'blackslime');
+        this.sprite.setPosition(
+            this.sprite.x + Math.random() * (Math.random() < 0.5 ? 1 : -1) * 5,
+            this.sprite.y + Math.random() * (Math.random() < 0.5 ? 1 : -1) * 5
+        );
         this.sprite.anims.play('right');
         this.add(this.sprite);
 
@@ -53,29 +56,37 @@ class Monster extends Phaser.GameObjects.Container {
 
         if (blocked.right) {
             this.body.setVelocity(0, speed);
+            this.sprite.play('right');
             if (this.body.wasTouching.down) {
                 this.body.setVelocity(0, -speed);
+                this.sprite.play('right');
             }
         }
 
         if (blocked.down) {
             this.body.setVelocity(-speed, 0);
+            this.sprite.play('left');
             if (this.body.wasTouching.right) {
                 this.body.setVelocity(0, -speed);
+                this.sprite.play('right');
             }
         }
 
         if (blocked.left) {
             this.body.setVelocity(0, -speed);
+            this.sprite.play('right');
             if (this.body.wasTouching.down) {
                 this.body.setVelocity(speed, 0);
+                this.sprite.play('right');
             }
         }
 
         if (blocked.up) {
             this.body.setVelocity(speed, 0);
+            this.sprite.play('right');
             if (this.body.wasTouching.left) {
                 this.body.setVelocity(0, speed);
+                this.sprite.play('right');
             }
         }
 
