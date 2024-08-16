@@ -1,19 +1,17 @@
-import TowerUI from '../UI/TowerUI.js';
 import Tower from './Tower.js';
 
 class ZoneTile extends Phaser.GameObjects.Zone {
     constructor(scene, x, y) {
         super(scene, scene.game.tile.width * x, scene.game.tile.height * y, scene.game.tile.width, scene.game.tile.height);
 
-        this.isTower = false;
-
-        this.state = 'normal';
+        this.center = {
+            x: this.x + scene.game.tile.width / 2,
+            y: this.y + scene.game.tile.height + scene.game.tile.height / 2,
+        };
 
         this.setPhysics();
         this.setObject();
         this.setInputs();
-
-        this.scene.add.text(this.x, this.y + scene.game.tile.height, `${x}, ${y}`)
 
         this.init();
     }
@@ -32,52 +30,18 @@ class ZoneTile extends Phaser.GameObjects.Zone {
 
     setInputs() {
         this.setInteractive();
-        this.on(
-            'pointerdown',
-            () => {
-                if (this.state === 'selected') {
-                    this.scene.zones?.selected?.destroy();
-                    this.scene.zones.getChildren().forEach((zone) => {
-                        zone.state = 'normal';
-                    });
-                    this.scene.towerUI.destroy();
-                    this.update();
-                } else {
-                    if (this.tower) {
-                    } else {
-                        this.scene?.towerUI?.destroy();
-                        this.scene.towerUI = new TowerUI(this.scene, 0, 0);
-                        this.scene.zones?.selected?.destroy();
-                        this.scene.zones.getChildren().forEach((zone) => {
-                            zone.state = 'normal';
-                        });
-                        this.state = 'selected';
-                        this.update();
-                    }
-                }
-            },
-            this
-        );
+        this.on('pointerdown', () => {
+            const a = this.scene.add.graphics();
+            a.fillStyle(0xff0000);
+            a.fillCircle(this.center.x, this.center.y, 3);
 
-        this.on(
-            'pointerover',
-            function (pointer) {
-                if (this.tower && this.tower.isReady && !this.tower.rangeArea.circle.visible) {
-                    this.tower.rangeArea.circle.setVisible(true);
-                }
-            },
-            this
-        );
-
-        this.on(
-            'pointerout',
-            function (pointer) {
-                if (this.tower && this.tower.isReady && this.tower.rangeArea.circle.visible) {
-                    this.tower.rangeArea.circle.setVisible(false);
-                }
-            },
-            this
-        );
+            const b = this.scene.add.rectangle(this.center.x, this.center.y);
+            this.scene.physics.add.existing(b);
+            b.body.immovable = true;
+            b.body.allowGravity = false;
+            b.body.setCircle(10);
+            b.setPosition(this.center.x, this.center.y)
+        });
     }
 
     installTower(towerConfig) {
@@ -91,15 +55,7 @@ class ZoneTile extends Phaser.GameObjects.Zone {
         this.scene?.towerUI?.destroy();
     }
 
-    update() {
-        if (this.state === 'selected') {
-            this.scene.zones.selected = this.scene.add.rectangle(this.x, this.y + this.height, this.width, this.height, 0xffffff, 0.3);
-            this.scene.zones.selected.setStrokeStyle(3, 0xffffff, 0.4);
-            this.scene.zones.selected.setOrigin(0, 0);
-        } else {
-            this.scene.zones.selected.destroy();
-        }
-    }
+    update() {}
 }
 
 export default ZoneTile;

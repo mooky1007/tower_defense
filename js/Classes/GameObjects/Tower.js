@@ -2,10 +2,17 @@ import Projectile from './Projectile.js';
 
 class Tower extends Phaser.GameObjects.Sprite {
     constructor(config, scene, x, y, parent) {
-        super(scene, x, y, 'tower');
+        super(scene, x, y, 'swordman');
         this.name = 'tower';
         this.setTowerData(config);
         this.attackTimer = null;
+        this.target = null;
+
+        this.targetText = this.scene.add.graphics();
+        this.targetText.fillStyle(0xff0000);
+        this.targetText.fillCircle(this.x, this.y, 4);
+
+        this.targetText.setDepth(1000);
         this.parent = parent;
 
         this.anims.create({
@@ -16,13 +23,14 @@ class Tower extends Phaser.GameObjects.Sprite {
         });
 
         this.anims.play('install');
-        this.on('animationcomplete', this.attack);
+        this.on('animationcomplete', () => {
+            this.attack();
+        });
 
         this.init();
     }
 
     setTowerData(config) {
-        console.log(config);
         const { type } = config;
         this.type = type;
 
@@ -38,21 +46,18 @@ class Tower extends Phaser.GameObjects.Sprite {
         }
 
         if (this.type === 'explosion') {
-            console.log('a');
             this.attackDamage = 1;
             this.range = this.scene.game.tile.width;
             this.setTint(0xff0000, 0xffffff, 0xffffff, 0xffffff);
         }
 
         if (this.type === 'long') {
-            console.log('a');
             this.attackDamage = 10;
             this.range = this.scene.game.tile.width * 3;
             this.setTint(0x00ff00, 0xffffff, 0xffffff, 0xffffff);
         }
 
         if (this.type === 'fast') {
-            console.log('a');
             this.attackDamage = 1;
             this.attackDelay = 100;
             this.range = this.scene.game.tile.width;
@@ -96,16 +101,24 @@ class Tower extends Phaser.GameObjects.Sprite {
     }
 
     attack() {
-        if (this.rangeArea.enemiesInRange.size !== 0) {
-            const target = Array.from(this.rangeArea.enemiesInRange)[0];
+        this.targetText.clear();
+        this.targetText.fillStyle(0xff0000);
+        this.targetText.fillCircle(this.x, this.parent.y + this.scene.game.tile.height + this.scene.game.tile.height / 2, 4);
 
-            const angle = Phaser.Math.Angle.Between(this.rangeArea.x, this.rangeArea.y, target.x, target.y);
+        if (this.target) {
+            this.targetText.clear();
+            this.targetText.fillStyle(0xff0000);
+            this.targetText.fillCircle(this.target.x, this.target.y + this.scene.game.tile.height + this.scene.game.tile.height / 2, 4);
 
-            const projectile = new Projectile(this.scene, this.rangeArea.x, this.rangeArea.y, target, this.type);
+            const angle = Phaser.Math.Angle.Between(this.x, this.y, this.target.x, this.target.y);
+
+            const projectile = new Projectile(this.scene, this.x, this.y, this.target, this.type);
             projectile.parent = this;
             projectile.damage = this.attackDamage;
             projectile.radius = this.radius;
             projectile.fire(this.rangeArea.x, this.rangeArea.y, angle, this.projectileSpeed);
+
+            this.target = null;
         }
 
         this.timerEvent = this.scene.time.delayedCall(this.attackDelay, () => this.attack());
@@ -146,8 +159,9 @@ class RangeCircle extends Phaser.GameObjects.Zone {
 
         this.scene.physics.add.overlap(this.scene.enemys, this, (enemy, range) => {
             if (!this.enemiesInRange.has(enemy)) {
+                this.parent.target = enemy;
                 this.enemiesInRange.add(enemy);
-                enemy.setTint(0xff0000, 0.1);
+                // enemy.sprite.setTint(0xff0000, 0.1);
             }
         });
 
@@ -156,7 +170,7 @@ class RangeCircle extends Phaser.GameObjects.Zone {
     }
 
     update() {
-        this.circle.clear(); // clear previous circle
+        this.circle.clear();
         this.circle.lineStyle(2, 0xff0000, 0.5);
         this.circle.strokeCircle(this.x, this.y, this.parent.range);
 
@@ -176,8 +190,8 @@ class RangeCircle extends Phaser.GameObjects.Zone {
                 enemy.y
             );
 
-            if (distance > this.parent.range + 20) {
-                enemy.clearTint();
+            if (distance > this.parent.range) {
+                // enemy.sprite.clearTint();
                 this.enemiesInRange.delete(enemy);
             }
         }

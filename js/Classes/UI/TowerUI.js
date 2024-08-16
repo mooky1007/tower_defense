@@ -80,8 +80,6 @@ class InstallTowerButton extends Phaser.GameObjects.Container {
         this.add([this.text, this.text2]);
         this.text.setDepth(this.background.depth + 1);
 
-        console.log(tower);
-
         this.on(
             'pointerdown',
             () => {

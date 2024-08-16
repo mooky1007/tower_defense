@@ -26,6 +26,11 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.body.world.on('worldbounds', (e) => {
             if (e.gameObject.name === 'projectile' && e.gameObject === this) this.destroy();
         });
+
+        this.scene.physics.add.overlap(this.scene.enemys, this, (monster) => {
+            monster.hit();
+            this.destroy();
+        });
     }
 
     fire(x, y, angle, speed) {
