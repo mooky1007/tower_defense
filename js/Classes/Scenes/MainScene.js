@@ -35,10 +35,6 @@ class MainScene extends Phaser.Scene {
 
         bgm.play();
 
-        this.swordSwipeSound = this.sound.add('swordSwipe', {
-            volume: 0.3,
-        });
-
         const { tile } = this.game;
         this.zones = this.add.group();
         this.towers = this.add.group();

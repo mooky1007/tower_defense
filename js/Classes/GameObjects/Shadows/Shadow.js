@@ -66,7 +66,11 @@ class Shadow {
 
         this.sprite.setFlipX(enemy.x > this.sprite.x);
         this.attack = true;
-        this.scene.swordSwipeSound.play();
+
+        this.sound.add('swordSwipe', {
+            volume: 0.1,
+        }).play();
+
         this.sprite.anims.play('attack');
         enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate);
         this.sprite.on('animationcomplete', () => {
