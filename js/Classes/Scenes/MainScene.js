@@ -30,7 +30,7 @@ class MainScene extends Phaser.Scene {
     create() {
         const bgm = this.sound.add('bgm', {
             loop: true, // BGM을 반복 재생하도록 설정
-            volume: 0.5, // 볼륨 조절 (0.0부터 1.0까지)
+            volume: 1, // 볼륨 조절 (0.0부터 1.0까지)
         });
 
         bgm.play();
