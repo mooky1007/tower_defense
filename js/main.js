@@ -2,8 +2,8 @@ import MainScene from './Classes/Scenes/MainScene.js';
 
 const config = {
     type: Phaser.AUTO,
-    width: 550,
-    height: 1100,
+    width: 350,
+    height: 700,
     backgroundColor: '#222',
     physics: {
         default: 'arcade',
@@ -15,13 +15,16 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
     },
+    audio: {
+        disableWebAudio: false,
+    },
     // parent: 'game',
 };
 
 class App extends Phaser.Game {
     constructor(config) {
         super(config);
-        this.tileSize = [11, 22];
+        this.tileSize = [7, 14];
         this.tile = {
             width: config.width / this.tileSize[0],
             height: config.height / this.tileSize[1],

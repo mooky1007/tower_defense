@@ -24,7 +24,7 @@ class Timer {
 
     updateTimer() {
         if (this.second === 0) {
-            this.second = 90;
+            this.second = 10;
             this.scene.spawnWave();
         }
         this.second -= 1;

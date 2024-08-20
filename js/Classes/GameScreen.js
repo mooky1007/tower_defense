@@ -8,43 +8,19 @@ class GameScreen extends Phaser.GameObjects.Container {
         super(scene, x, y);
         const tile = scene.game.tile;
 
-        this.setSize(tile.width * 11, tile.height * 11);
+        this.setSize(tile.width * 7, tile.height * 7);
         this.setPosition(0, tile.height);
         this.setDepth(-10);
 
         this.createBackground();
+        this.createTowerZoneBox(0, 1, 5, 2);
+        this.createTowerZoneBox(1, 4, 6, 5);
 
-        this.createTowerZoneBox(3, 0, 6, 3);
-        this.createTowerZoneBox(0, 1, 1, 5);
-        this.createTowerZoneBox(2, 5, 9, 5);
-        this.createTowerZoneBox(8, 1, 9, 4);
-        this.createTowerZoneBox(6, 7, 10, 9);
-        this.createTowerZoneBox(1, 9, 5, 9);
-        this.createTowerZoneBox(0, 6, 4, 7);
-        this.createTowerZoneBox(-1, 8, -1, 10);
-        this.createTowerZoneBox(11, 0);
-
-        this.createLoadZoneBox('grass2', 0, 0, 1, 0);
-        this.createLoadZoneBox('grass2', 3, 4, 6, 4);
-        this.createLoadZoneBox('grass2', 8, 0, 9, 0);
-        this.createLoadZoneBox('grass2', 6, 6, 9, 6);
-        this.createLoadZoneBox('grass2', 1, 8, 4, 8);
-        this.createLoadZoneBox('grass2', 1, 10, 10, 10);
-        this.createLoadZoneBox('grass2', 7, 4, 7, 4);
-        this.createLoadZoneBox('grass2', 10, 6, 10, 6);
-        this.createLoadZoneBox('grass2', 5, 8, 5, 8);
-        this.createLoadZoneBox('grass2', 2, 1, 2, 3);
-        this.createLoadZoneBox('grass2', 7, 1, 7, 3);
-        this.createLoadZoneBox('grass2', 10, 1, 10, 5);
-        this.createLoadZoneBox('grass2', 5, 7, 5, 7);
-        this.createLoadZoneBox('grass2', 0, 9, 0, 9);
-        this.createLoadZoneBox('grass2', 2, 4);
-        this.createLoadZoneBox('grass2', 0, 10);
-        this.createLoadZoneBox('grass2', 0, 8);
-        this.createLoadZoneBox('grass2', 5, 6);
-        this.createLoadZoneBox('grass2', 7, 0);
-        this.createLoadZoneBox('grass2', 2, 0);
-        this.createLoadZoneBox('grass2', 10, 0);
+        this.createLoadZoneBox('load', 0, 0, 6, 0);
+        this.createLoadZoneBox('load', 6, 1, 6, 2);
+        this.createLoadZoneBox('load', 0, 3, 6, 3);
+        this.createLoadZoneBox('load', 0, 4, 0, 5);
+        this.createLoadZoneBox('load', 0, 6, 6, 6);
 
         this.selectedZone = this.scene.add.graphics();
         this.add(this.selectedZone);
@@ -55,63 +31,77 @@ class GameScreen extends Phaser.GameObjects.Container {
         this.topArea.body.allowGravity = false;
         this.topArea.body.immovable = true;
 
-        this.bottomArea = this.scene.add.zone(0, this.scene.game.tile.height * 12, this.scene.game.config.width, 1);
+        this.bottomArea = this.scene.add.zone(0, this.scene.game.tile.height * 8 + 1, this.scene.game.config.width, 1);
         this.bottomArea.setOrigin(0, 0);
         this.scene.physics.add.existing(this.bottomArea);
         this.bottomArea.body.allowGravity = false;
         this.bottomArea.body.immovable = true;
 
+        this.leftArea = this.scene.add.zone(-1, this.scene.game.tile.height, 1, this.scene.game.tile.height * 7);
+        this.leftArea.setOrigin(0, 0);
+        this.scene.physics.add.existing(this.leftArea);
+        this.leftArea.body.allowGravity = false;
+        this.leftArea.body.immovable = true;
+
+        this.rightArea = this.scene.add.zone(this.scene.game.tile.width * 7 + 1, this.scene.game.tile.height, 1, this.scene.game.tile.height * 6);
+        this.rightArea.setOrigin(0, 0);
+        this.scene.physics.add.existing(this.rightArea);
+        this.rightArea.body.allowGravity = false;
+        this.rightArea.body.immovable = true;
+
         this.scene.physics.add.collider(this.scene.enemys, this.topArea);
         this.scene.physics.add.collider(this.scene.enemys, this.bottomArea);
+        this.scene.physics.add.collider(this.scene.enemys, this.leftArea);
+        this.scene.physics.add.collider(this.scene.enemys, this.rightArea);
         this.scene.physics.add.collider(this.scene.projectiles, this.topArea, (projectile) => projectile.destroy());
         this.scene.physics.add.collider(this.scene.projectiles, this.bottomArea, (projectile) => projectile.destroy());
 
-        const axeMan = this.scene.add.sprite(tile.width * 6 + tile.width / 2, tile.height * 4 + tile.height / 2 - 15, 'axe_man');
-        axeMan.setDepth = 8;
-        axeMan.anims.create({
-            key: 'idle',
-            frames: axeMan.anims.generateFrameNumbers('axe_man', { start: 0, end: 3 }),
-            frameRate: 6,
-            repeat: -1, // 무한 반복을 의미
-        });
+        // const axeMan = this.scene.add.sprite(tile.width * 6 + tile.width / 2, tile.height * 4 + tile.height / 2 - 15, 'axe_man');
+        // axeMan.setDepth = 8;
+        // axeMan.anims.create({
+        //     key: 'idle',
+        //     frames: axeMan.anims.generateFrameNumbers('axe_man', { start: 0, end: 3 }),
+        //     frameRate: 6,
+        //     repeat: -1, // 무한 반복을 의미
+        // });
 
-        axeMan.anims.create({
-            key: 'attack',
-            frames: axeMan.anims.generateFrameNumbers('axe_man2', { start: 0, end: 4 }),
-            frameRate: 12,
-            repeat: 0, // 무한 반복을 의미
-        });
-        axeMan.play('idle');
-        axeMan.setSize(tile.width, tile.height);
+        // axeMan.anims.create({
+        //     key: 'attack',
+        //     frames: axeMan.anims.generateFrameNumbers('axe_man2', { start: 0, end: 4 }),
+        //     frameRate: 12,
+        //     repeat: 0, // 무한 반복을 의미
+        // });
+        // axeMan.play('idle');
+        // axeMan.setSize(tile.width, tile.height);
 
-        const swMan = this.scene.add.sprite(tile.width * 5 + tile.width / 2, tile.height * 4 + tile.height / 2 - 15, 'sword_man');
-        swMan.setDepth = 8;
-        swMan.anims.create({
-            key: 'idle',
-            frames: swMan.anims.generateFrameNumbers('sword_man', { start: 0, end: 3 }),
-            frameRate: 6,
-            repeat: -1, // 무한 반복을 의미
-        });
+        // const swMan = this.scene.add.sprite(tile.width * 5 + tile.width / 2, tile.height * 4 + tile.height / 2 - 15, 'sword_man');
+        // swMan.setDepth = 8;
+        // swMan.anims.create({
+        //     key: 'idle',
+        //     frames: swMan.anims.generateFrameNumbers('sword_man', { start: 0, end: 3 }),
+        //     frameRate: 6,
+        //     repeat: -1, // 무한 반복을 의미
+        // });
 
-        swMan.anims.create({
-            key: 'attack',
-            frames: swMan.anims.generateFrameNumbers('sword_man2', { start: 0, end: 3 }),
-            frameRate: 12,
-            repeat: 0, // 무한 반복을 의미
-        });
-        swMan.play('idle');
-        swMan.setSize(tile.width, tile.height);
+        // swMan.anims.create({
+        //     key: 'attack',
+        //     frames: swMan.anims.generateFrameNumbers('sword_man2', { start: 0, end: 3 }),
+        //     frameRate: 12,
+        //     repeat: 0, // 무한 반복을 의미
+        // });
+        // swMan.play('idle');
+        // swMan.setSize(tile.width, tile.height);
 
-        this.timer = new Timer(scene, 90);
+        this.timer = new Timer(scene, 10);
         this.monsterCount = new MonsterCount(scene);
 
         this.scene.add.existing(this);
     }
 
     createBackground() {
-        for (let i = 0; i < 11; i++) {
-            for (let j = 0; j < 11; j++) {
-                this.add(new DecoTile(this.scene, i, j, 'grass', false));
+        for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 7; j++) {
+                this.add(new DecoTile(this.scene, i, j, 'bg', false));
             }
         }
     }

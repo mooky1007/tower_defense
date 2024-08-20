@@ -1,5 +1,6 @@
 import Monster from '../GameObjects/Monster.js';
 import GameScreen from '../GameScreen.js';
+import TowerUI from '../UI/TowerUI.js';
 import Wave from '../Wave.js';
 
 class MainScene extends Phaser.Scene {
@@ -21,8 +22,8 @@ class MainScene extends Phaser.Scene {
 
         this.load.audio('bgm', 'assets/bgm.mp3');
 
-        this.load.image('grass', 'assets/grey_bottom.png');
-        this.load.image('grass2', 'assets/grey_bottom2.png');
+        this.load.image('bg', 'assets/grey_bottom.png');
+        this.load.image('load', 'assets/grey_bottom2.png');
     }
 
     create() {
@@ -44,6 +45,7 @@ class MainScene extends Phaser.Scene {
         this.projectiles.runChildUpdate = true;
         this.enemys.runChildUpdate = true;
 
+        this.ui = new TowerUI(this);
         this.gameScreen = new GameScreen(this, 0, tile.height);
 
         this.physics.add.collider(this.enemys, this.zones);

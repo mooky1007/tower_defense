@@ -19,6 +19,7 @@ class Monster extends Phaser.GameObjects.Container {
             y: this.y - tileHeight / 2,
         };
 
+        this._hp = 10;
         this.speed = 75;
 
         this.scene.physics.world.enable(this);
@@ -43,8 +44,30 @@ class Monster extends Phaser.GameObjects.Container {
         scene.gameScreen.add(this);
     }
 
-    hit() {
-        this.sprite.setTint(0xff0000, 1);
+    get hp() {
+        return this._hp;
+    }
+
+    set hp(value) {
+        this._hp = value;
+        if (this._hp <= 0) this.die();
+    }
+
+    hit(value) {
+        this.sprite.setTintFill(0xff0000, 1);
+        this.hp -= value;
+        console.log(this.hp);
+        this?.scene?.time?.addEvent({
+            delay: 100,
+            callback: () => {
+                this.sprite.clearTint();
+            },
+            callbackScope: this,
+            loop: false,
+        });
+    }
+
+    die() {
         this.destroy();
     }
 
