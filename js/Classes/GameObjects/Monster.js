@@ -48,11 +48,11 @@ class Monster extends Phaser.GameObjects.Container {
         if (this._hp <= 0) this.die();
     }
 
-    hit(value) {
+    hit(value, cr) {
         if (!this.alive) return;
         this.sprite.setTintFill(0xff0000, 1);
 
-        const critical = Math.random() < 0.2 ? true : false;
+        const critical = Math.random() < cr ? true : false;
         if (critical) value *= 2;
 
         this.damageText = this.scene.add.text(this.center.x, this.center.y - 10, value, {
