@@ -1,6 +1,6 @@
 import Shadow from './Shadow.js';
 
-class AxeShadow extends Shadow {
+class AxeMasterShadow extends Shadow {
     constructor(parent) {
         super(parent);
         this.price = 15;
@@ -13,15 +13,17 @@ class AxeShadow extends Shadow {
         this.attackFrame = [0, 3];
         this.attckFramRate = 12;
 
+        this.spriteScale = 1.6;
+
         this.attackType = 'instantHitRadius';
 
         this.level = 1;
         this.price = 15;
-        this.damage = [1, 6];
+        this.damage = [6, 21];
         this.radius = [30, 100];
         this.attackSpeed = 1200;
-        this.attackRadius = 40;
-        this.criticalRate = 0;
+        this.attackRadius = 90;
+        this.criticalRate = 0.7;
 
         this.radiusType = 'cross';
     }
@@ -32,4 +34,4 @@ class AxeShadow extends Shadow {
     }
 }
 
-export default AxeShadow;
+export default AxeMasterShadow;

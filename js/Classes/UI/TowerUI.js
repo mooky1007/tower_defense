@@ -1,4 +1,6 @@
+import AxeMasterShadow from '../GameObjects/Shadows/AxeMasterShadow.js';
 import AxeShadow from '../GameObjects/Shadows/AxeShadow.js';
+import SwordMasterShadow from '../GameObjects/Shadows/SwordMasterShadow.js';
 import SwordShadow from '../GameObjects/Shadows/SwordShadow.js';
 
 class TowerUI extends Phaser.GameObjects.Container {
@@ -30,7 +32,8 @@ class TowerUI extends Phaser.GameObjects.Container {
 
         testButton.setInteractive();
         testButton.on('pointerdown', () => {
-            this.scene.selectedZone.summon(new SwordShadow(this.scene.selectedZone));
+            if (Math.random() < 0.5) this.scene.selectedZone.summon(new SwordShadow(this.scene.selectedZone));
+            else this.scene.selectedZone.summon(new SwordMasterShadow(this.scene.selectedZone));
         });
 
         const testButton2 = this.scene.add.container(scene);
@@ -48,13 +51,14 @@ class TowerUI extends Phaser.GameObjects.Container {
         });
 
         const img2 = this.scene.add.sprite(0, 0, 'axe_man');
-        
+
         testButton2.add([line2, text2, img2]);
         this.add(testButton2);
 
         testButton2.setInteractive();
         testButton2.on('pointerdown', () => {
-            this.scene.selectedZone.summon(new AxeShadow(this.scene.selectedZone));
+            if (Math.random() < 0.5) this.scene.selectedZone.summon(new AxeShadow(this.scene.selectedZone));
+            else this.scene.selectedZone.summon(new AxeMasterShadow(this.scene.selectedZone));
         });
 
         this.scene.add.existing(this);

@@ -14,17 +14,26 @@ class Shadow {
         this.attackFrame = [0, 0];
         this.attckFramRate = 18;
 
+        this.spriteScale = 1;
+
+        this.attackType = 'instantHit';
+
         this.level = 0;
         this.damage = [0, 0];
+        this.radius = [30, 100];
         this.attackSpeed = 1000;
         this.attackRadius = 30;
         this.criticalRate = 0;
+
+        this.radiusType = 'cross';
+        this.radiusArea = [];
     }
 
     create() {
-        this.sprite = this.scene.add.sprite(this.parent.center.x, this.parent.center.y + this.spriteOffsetY, this.idleSpriteKey);
+        this.sprite = this.scene.add.sprite(this.parent.center.x, this.parent.center.y + (this.spriteOffsetY * this.spriteScale), this.idleSpriteKey);
         this.sprite.setOrigin(0.5, 0.5);
         this.sprite.setSize(this.width, this.height);
+        this.sprite.setScale(this.spriteScale);
         this.sprite.anims.create({
             key: 'idle',
             frames: this.sprite.anims.generateFrameNumbers(this.idleSpriteKey, { start: this.idleFrame[0], end: this.idleFrame[1] }),
@@ -40,6 +49,15 @@ class Shadow {
         });
 
         this.sprite.play('idle');
+
+        this[`${this.radiusType}Area`]();
+    }
+
+    crossArea() {
+        this.radiusArea = [
+            this.createAttackRange(this.radius[0], this.radius[1], this.attackType),
+            this.createAttackRange(this.radius[1], this.radius[0], this.attackType),
+        ];
     }
 
     instantHit(enemy, shadow) {
@@ -105,7 +123,7 @@ class Shadow {
 
     checkGold() {
         const { price } = this;
-        if (this.scene.gold < price) return false;
+        return this.scene.gold < price;
     }
 }
 

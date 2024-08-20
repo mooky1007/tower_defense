@@ -54,7 +54,7 @@ class MainScene extends Phaser.Scene {
     }
 
     spawnWave() {
-        new Wave(this, 15);
+        new Wave(this, 45);
     }
 
     update() {
