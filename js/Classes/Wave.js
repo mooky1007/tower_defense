@@ -6,7 +6,7 @@ class Wave {
         this.monsterCount = 0;
 
         this.spawnTimer = scene.time.addEvent({
-            delay: 250, // 타이머의 주기 (1초)
+            delay: 250,
             callback: () => {
                 if (this.monsterCount < this.maximumMonster) {
                     this.monsterCount += 1;

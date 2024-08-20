@@ -4,7 +4,7 @@ class Timer {
         this.second = second;
 
         this.timer = scene.time.addEvent({
-            delay: 1000, // 타이머의 주기 (1초)
+            delay: 1000,
             callback: this.updateTimer,
             callbackScope: this,
             loop: true,
