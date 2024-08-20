@@ -30,7 +30,7 @@ class Shadow {
     }
 
     create() {
-        this.sprite = this.scene.add.sprite(this.parent.center.x, this.parent.center.y + (this.spriteOffsetY * this.spriteScale), this.idleSpriteKey);
+        this.sprite = this.scene.add.sprite(this.parent.center.x, this.parent.center.y + this.spriteOffsetY * this.spriteScale, this.idleSpriteKey);
         this.sprite.setOrigin(0.5, 0.5);
         this.sprite.setSize(this.width, this.height);
         this.sprite.setScale(this.spriteScale);
@@ -66,6 +66,7 @@ class Shadow {
 
         this.sprite.setFlipX(enemy.x > this.sprite.x);
         this.attack = true;
+        this.scene.swordSwipeSound.play();
         this.sprite.anims.play('attack');
         enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate);
         this.sprite.on('animationcomplete', () => {

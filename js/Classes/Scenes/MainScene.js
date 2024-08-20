@@ -21,6 +21,7 @@ class MainScene extends Phaser.Scene {
         this.load.spritesheet('blackslime', 'assets/blackslime.png', frame64);
 
         this.load.audio('bgm', 'assets/bgm.mp3');
+        this.load.audio('swordSwipe', 'assets/slash-21834.mp3');
 
         this.load.image('bg', 'assets/grey_bottom.png');
         this.load.image('load', 'assets/grey_bottom2.png');
@@ -33,6 +34,8 @@ class MainScene extends Phaser.Scene {
         });
 
         bgm.play();
+
+        this.swordSwipeSound = this.sound.add('swordSwipe');
 
         const { tile } = this.game;
         this.zones = this.add.group();
