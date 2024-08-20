@@ -67,7 +67,7 @@ class Shadow {
         this.sprite.setFlipX(enemy.x > this.sprite.x);
         this.attack = true;
 
-        this.sound.add('swordSwipe', {
+        this.scene.sound.add('swordSwipe', {
             volume: 0.1,
         }).play();
 
