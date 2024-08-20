@@ -29,13 +29,15 @@ class MainScene extends Phaser.Scene {
 
     create() {
         const bgm = this.sound.add('bgm', {
-            loop: true, // BGM을 반복 재생하도록 설정
-            volume: 1, // 볼륨 조절 (0.0부터 1.0까지)
+            loop: true,
+            volume: 1,
         });
 
         bgm.play();
 
-        this.swordSwipeSound = this.sound.add('swordSwipe');
+        this.swordSwipeSound = this.sound.add('swordSwipe', {
+            volume: 0.3,
+        });
 
         const { tile } = this.game;
         this.zones = this.add.group();
