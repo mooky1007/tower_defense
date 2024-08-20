@@ -6,7 +6,7 @@ import Wave from '../Wave.js';
 class MainScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
-        this.gold = 100;
+        this.gold = 30;
 
         this.level = 0;
     }
@@ -51,8 +51,6 @@ class MainScene extends Phaser.Scene {
         this.physics.add.collider(this.enemys, this.zones);
 
         this.spawnWave();
-
-        this.timeScale = 40;
     }
 
     spawnWave() {

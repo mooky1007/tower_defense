@@ -19,7 +19,7 @@ class Monster extends Phaser.GameObjects.Container {
             y: this.y - tileHeight / 2,
         };
 
-        this._hp = 10;
+        this._hp = 5;
         this.speed = 75;
 
         this.scene.physics.world.enable(this);
@@ -36,11 +36,6 @@ class Monster extends Phaser.GameObjects.Container {
         this.sprite.anims.play('right');
         this.add(this.sprite);
 
-        // this.centerDot = this.scene.add.graphics();
-        // this.centerDot.fillStyle(0xff0000);
-        // this.centerDot.fillCircle(this.center.x, this.center.y, 2);
-        // this.add(this.centerDot);
-
         scene.gameScreen.add(this);
     }
 
@@ -54,13 +49,38 @@ class Monster extends Phaser.GameObjects.Container {
     }
 
     hit(value) {
+        if (!this.alive) return;
         this.sprite.setTintFill(0xff0000, 1);
-        this.hp -= value;
-        console.log(this.hp);
-        this?.scene?.time?.addEvent({
+
+        const critical = Math.random() < 0.2 ? true : false;
+        if (critical) value *= 2;
+
+        this.damageText = this.scene.add.text(this.center.x, this.center.y - 10, value, {
+            fontSize: critical ? '13px' : '9px',
+            color: critical ? 'red' : '#fff',
+            fontFamily: 'mabi',
+        });
+
+        this.add(this.damageText);
+
+        this.damageText.setOrigin(0.5, 0.5);
+        this.damageText.setStroke('x0000000', 4);
+
+        this.scene.tweens.add({
+            targets: this.damageText,
+            alpha: 0,
+            y: this.damageText.y - 6,
+            duration: 600,
+            onComplete: () => {
+                this.damageText.destroy();
+            },
+        });
+
+        this.scene.time.addEvent({
             delay: 100,
             callback: () => {
                 this.sprite.clearTint();
+                this.hp -= value;
             },
             callbackScope: this,
             loop: false,
@@ -68,7 +88,18 @@ class Monster extends Phaser.GameObjects.Container {
     }
 
     die() {
-        this.destroy();
+        if (!this.alive) return;
+        this.alive = false;
+        this.scene.gold += 1;
+
+        this.scene.time.addEvent({
+            delay: 200,
+            callback: () => {
+                this.destroy();
+            },
+            callbackScope: this,
+            loop: false,
+        });
     }
 
     update() {
@@ -79,19 +110,16 @@ class Monster extends Phaser.GameObjects.Container {
 
         if (blocked.right) {
             this.body.setVelocity(0, speed);
-            this.sprite.play('right');
+            this.sprite.play('left');
             if (this.body.wasTouching.down) {
                 this.body.setVelocity(0, -speed);
-                this.sprite.play('right');
             }
         }
 
         if (blocked.down) {
             this.body.setVelocity(-speed, 0);
-            this.sprite.play('left');
             if (this.body.wasTouching.right) {
                 this.body.setVelocity(0, -speed);
-                this.sprite.play('right');
             }
         }
 
@@ -100,16 +128,13 @@ class Monster extends Phaser.GameObjects.Container {
             this.sprite.play('right');
             if (this.body.wasTouching.down) {
                 this.body.setVelocity(speed, 0);
-                this.sprite.play('right');
             }
         }
 
         if (blocked.up) {
             this.body.setVelocity(speed, 0);
-            this.sprite.play('right');
             if (this.body.wasTouching.left) {
                 this.body.setVelocity(0, speed);
-                this.sprite.play('right');
             }
         }
 

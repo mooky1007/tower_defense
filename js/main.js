@@ -2,13 +2,13 @@ import MainScene from './Classes/Scenes/MainScene.js';
 
 const config = {
     type: Phaser.AUTO,
-    width: 350,
-    height: 700,
+    width: 576,
+    height: 768,
     backgroundColor: '#222',
     physics: {
         default: 'arcade',
         arcade: {
-            debug: false,
+            debug: true,
         },
     },
     scene: [MainScene],
@@ -18,13 +18,12 @@ const config = {
     audio: {
         disableWebAudio: false,
     },
-    // parent: 'game',
 };
 
 class App extends Phaser.Game {
     constructor(config) {
         super(config);
-        this.tileSize = [7, 14];
+        this.tileSize = [9, 12];
         this.tile = {
             width: config.width / this.tileSize[0],
             height: config.height / this.tileSize[1],
@@ -35,7 +34,7 @@ class App extends Phaser.Game {
 
     init() {
         document.addEventListener('contextmenu', function (event) {
-            event.preventDefault(); // 기본 컨텍스트 메뉴의 표시를 막습니다.
+            event.preventDefault();
         });
     }
 }

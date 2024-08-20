@@ -15,13 +15,6 @@ class Sprite extends Phaser.GameObjects.Sprite {
             frameRate: 12,
             repeat: -1,
         });
-
-        // this.anims.create({
-        //     key: 'die',
-        //     frames: this.anims.generateFrameNumbers(`${texture}_death`, { start: 0, end: 5 }),
-        //     frameRate: 5,
-        //     repeat: -1,
-        // });
     }
 }
 

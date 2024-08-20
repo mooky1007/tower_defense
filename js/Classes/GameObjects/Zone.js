@@ -53,6 +53,8 @@ class ZoneTile extends Phaser.GameObjects.Zone {
 
     summon() {
         if (this.shadow) return;
+        if (this.scene.gold < 10) return;
+        this.scene.gold -= 10;
         this.shadow = true;
 
         const swMan = this.scene.add.sprite(this.center.x, this.center.y - 15, 'sword_man');
@@ -80,7 +82,30 @@ class ZoneTile extends Phaser.GameObjects.Zone {
         range.body.immovable = true;
         range.body.allowGravity = false;
 
+        const range2 = this.scene.add.zone(this.center.x, this.center.y, 100, 30);
+
+        this.scene.physics.add.existing(range2);
+        range2.body.immovable = true;
+        range2.body.allowGravity = false;
+
         this.scene.physics.add.overlap(this.scene.enemys, range, (enemy, shadow) => {
+            if (this.attack) return;
+            if (!enemy.alive) return;
+
+            swMan.setFlipX(enemy.x > swMan.x);
+            this.attack = true;
+            swMan.anims.play('attack');
+            swMan.on('animationcomplete', () => {
+                enemy.hit(Math.floor(Math.random() * 2 + 3));
+                swMan.play('idle');
+                swMan.off('animationcomplete');
+                setTimeout(() => {
+                    this.attack = false;
+                }, 500);
+            });
+        });
+
+        this.scene.physics.add.overlap(this.scene.enemys, range2, (enemy, shadow) => {
             if (this.attack) return;
 
             swMan.setFlipX(enemy.x > swMan.x);
@@ -96,7 +121,7 @@ class ZoneTile extends Phaser.GameObjects.Zone {
             });
         });
 
-        this.parent.add([swMan, range]);
+        this.parent.add([swMan, range, range2]);
     }
 
     update() {

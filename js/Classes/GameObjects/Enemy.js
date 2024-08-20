@@ -105,7 +105,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
 
         if (this.x > this.scene.game.config.width) {
-          this.destroy();
+            this.destroy();
         }
     }
 
