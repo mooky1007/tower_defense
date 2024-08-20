@@ -32,8 +32,7 @@ class TowerUI extends Phaser.GameObjects.Container {
 
         testButton.setInteractive();
         testButton.on('pointerdown', () => {
-            if (Math.random() < 0.5) this.scene.selectedZone.summon(new SwordShadow(this.scene.selectedZone));
-            else this.scene.selectedZone.summon(new SwordMasterShadow(this.scene.selectedZone));
+            this.scene.selectedZone.summon(new SwordShadow(this.scene.selectedZone));
         });
 
         const testButton2 = this.scene.add.container(scene);
@@ -57,8 +56,7 @@ class TowerUI extends Phaser.GameObjects.Container {
 
         testButton2.setInteractive();
         testButton2.on('pointerdown', () => {
-            if (Math.random() < 0.5) this.scene.selectedZone.summon(new AxeShadow(this.scene.selectedZone));
-            else this.scene.selectedZone.summon(new AxeMasterShadow(this.scene.selectedZone));
+            this.scene.selectedZone.summon(new AxeShadow(this.scene.selectedZone));
         });
 
         this.scene.add.existing(this);
