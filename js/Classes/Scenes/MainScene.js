@@ -16,10 +16,16 @@ class MainScene extends Phaser.Scene {
 
         this.load.spritesheet('sword_man', 'assets/sword_man.png', frame64);
         this.load.spritesheet('sword_man2', 'assets/sword_man2.png', frame64);
+
         this.load.spritesheet('axe_man', 'assets/axe_man.png', frame64);
         this.load.spritesheet('axe_man2', 'assets/axe_man2.png', frame64);
+
         this.load.spritesheet('spear_man', 'assets/spear_man.png', frame64);
         this.load.spritesheet('spear_man2', 'assets/spear_man2.png', frame64);
+
+        this.load.spritesheet('bow_man', 'assets/bow_man.png', frame64);
+        this.load.spritesheet('bow_man2', 'assets/bow_man2.png', frame64);
+
         this.load.spritesheet('blackslime', 'assets/blackslime.png', frame64);
 
         this.load.audio('bgm', 'assets/bgm.mp3');

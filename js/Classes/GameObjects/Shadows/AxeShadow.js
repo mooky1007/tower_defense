@@ -13,23 +13,28 @@ class AxeShadow extends Shadow {
 
         this.attackSpriteKey = 'axe_man2';
         this.attackFrame = [0, 3];
-        this.attckFramRate = 12;
+        this.attckFramRate = 18;
 
         this.attackType = 'instantHitRadius';
 
         this.level = 1;
         this.price = 15;
-        this.damage = [1, 6];
-        this.radius = [30, 100];
-        this.attackSpeed = 1200;
+        this.damage = [3, 5];
+        this.radius = [this.parent.scene.game.tile.width, this.parent.scene.game.tile.width * 3];
+        this.attackSpeed = 900;
         this.attackRadius = 40;
-        this.criticalRate = 0;
+        this.criticalRate = 0.05;
 
         this.radiusType = 'cross';
     }
 
     static shadowName = 'Axe';
     static spriteKey = 'axe_man';
+
+    hitMonster(enemy) {
+        super.hitMonster(enemy);
+        enemy.applySlow(100, 0);
+    }
 }
 
 export default AxeShadow;

@@ -7,6 +7,8 @@ class Shadow {
         this.level = 1;
         this.price = 5;
 
+        this._exp = 0;
+
         this.spriteOffsetY = 0;
         this.idleSpriteKey = '';
         this.idleFrame = [0, 0];
@@ -28,6 +30,22 @@ class Shadow {
 
         this.radiusType = 'cross';
         this.radiusArea = [];
+    }
+
+    get exp() {
+        return this._exp;
+    }
+
+    set exp(value) {
+        this._exp = value;
+        this.scene.ui.update();
+        if (this._exp >= this.nextExp) {
+            this.levelUp();
+        }
+    }
+
+    get nextExp() {
+        return this.level * 20;
     }
 
     create() {
@@ -66,9 +84,10 @@ class Shadow {
         if (this.scene.gold < this.price * this.level) return;
         this.scene.gold -= this.price * this.level;
         this.level += 1;
+        this.exp = 0;
 
         this.levelText.text = this.level;
-        this.damage = this.damage.map((el) => el + 1);
+        this.damage = this.damage.map((el) => el * 1.1 + 1);
         this.attackSpeed -= 10;
     }
 
@@ -77,6 +96,24 @@ class Shadow {
             this.createAttackRange(this.radius[0], this.radius[1], this.attackType),
             this.createAttackRange(this.radius[1], this.radius[0], this.attackType),
         ];
+    }
+
+    circleArea() {
+        const radius = Math.max(...this.radius); // 원형 영역의 반지름
+        const range = this.scene.add.circle(this.parent.center.x, this.parent.center.y, radius, 0x000000, 0); // 투명 원형 영역 생성
+        this.scene.physics.add.existing(range);
+        range.body.setSize(radius * 2, radius * 2); // 원형 영역의 크기 설정
+        range.body.setCircle(radius);
+        range.body.immovable = true;
+        range.body.allowGravity = false;
+
+        this.scene.physics.add.overlap(this.scene.enemys, range, this[this.attackType].bind(this));
+
+        this.radiusArea = [range];
+    }
+
+    hitMonster(enemy) {
+        enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate, this);
     }
 
     instantHit(enemy, shadow) {
@@ -93,7 +130,7 @@ class Shadow {
             .play();
 
         this.sprite.anims.play('attack');
-        enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate);
+        this.hitMonster(enemy);
         this.sprite.on('animationcomplete', () => {
             this.sprite.play('idle');
             this.sprite.off('animationcomplete');
@@ -114,9 +151,10 @@ class Shadow {
         this.attack = true;
         this.sprite.anims.play('attack');
 
-        const radius = this.scene.add.rectangle(enemy.x, enemy.y + this.scene.game.tile.height, this.attackRadius, this.attackRadius);
+        const radius = this.scene.add.circle(enemy.x, enemy.y + this.scene.game.tile.height, this.attackRadius, 0x000000, 0);
 
         this.scene.physics.add.existing(radius);
+        radius.body.setCircle(this.attackRadius);
         radius.body.immovable = true;
         radius.body.allowGravity = false;
         radius.attackedEnemy = [];
@@ -125,9 +163,8 @@ class Shadow {
             if (!enemy.alive) return;
             if (radius.attackedEnemy.includes(enemy)) return;
             radius.attackedEnemy.push(enemy);
-            // console.log(Phaser.Math.Distance.Between(radius.x + radius.width / 2, radius.y  + radius.height / 2, enemy.sprite.x, enemy.sprite.y));
 
-            enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate);
+            this.hitMonster(enemy);
         });
 
         this.sprite.on('animationcomplete', () => {

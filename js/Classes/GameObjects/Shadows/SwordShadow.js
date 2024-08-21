@@ -17,9 +17,9 @@ class SwordShadow extends Shadow {
         this.attckFramRate = 18;
 
         this.level = 1;
-        this.damage = [2, 4];
-        this.radius = [30, 100];
-        this.attackSpeed = 100;
+        this.damage = [5, 7];
+        this.radius = [this.parent.scene.game.tile.width, this.parent.scene.game.tile.width * 3];
+        this.attackSpeed = 500;
         this.criticalRate = 0.2;
 
         this.radiusType = 'cross';

@@ -6,6 +6,7 @@ class Monster extends Phaser.GameObjects.Container {
         this.name = 'monster';
         this.alive = true;
         this.type = type;
+        this.slow = false;
 
         const tileWidth = scene.game.tile.width;
         const tileHeight = scene.game.tile.height;
@@ -20,9 +21,9 @@ class Monster extends Phaser.GameObjects.Container {
             y: this.y - tileHeight / 2,
         };
 
-        this._hp = 6 + (waveLevel * 1.5) ** (waveLevel * 0.1);
+        this._hp = 3 + (waveLevel * 1.5) ** (waveLevel * 0.1);
         this.gold = Math.floor(1 + waveLevel * 1.2);
-        this.speed = 100;
+        this.speed = Math.random() * 50 + 50;
 
         this.scene.physics.world.enable(this);
         this.body.allowGravity = false;
@@ -57,14 +58,14 @@ class Monster extends Phaser.GameObjects.Container {
         if (this._hp <= 0) this.die();
     }
 
-    hit(value, cr) {
+    hit(value, cr, attacker) {
         if (!this.alive) return;
         this.sprite.setTintFill(0xff0000, 1);
 
         const critical = Math.random() < cr ? true : false;
         if (critical) value *= 2;
 
-        this.damageText = this.scene.add.text(this.center.x, this.center.y - 10, value, {
+        this.damageText = this.scene.add.text(this.center.x, this.center.y - 10, Math.round(value), {
             fontSize: critical ? '13px' : '9px',
             color: critical ? 'red' : '#fff',
             fontFamily: 'mabi',
@@ -90,6 +91,7 @@ class Monster extends Phaser.GameObjects.Container {
             callback: () => {
                 this.sprite.clearTint();
                 this.hp -= value;
+                if (this.hp <= 0) attacker.exp += 1;
             },
             callbackScope: this,
             loop: false,
@@ -105,6 +107,60 @@ class Monster extends Phaser.GameObjects.Container {
             delay: 200,
             callback: () => {
                 this.destroy();
+            },
+            callbackScope: this,
+            loop: false,
+        });
+    }
+
+    applySlow(duration, slowFactor) {
+        if (!this.alive) return;
+        if (this.slow) return;
+        if (this.body.velocity.x === 0 && this.body.velocity.y === 0) return;
+
+        this.slow = true;
+        // 원래 속도 저장
+        this.originalSpeed = {
+            x: this.body.velocity.x,
+            y: this.body.velocity.y,
+        };
+
+        // 속도 감소
+        this.body.setVelocity(this.originalSpeed.x * slowFactor, this.originalSpeed.y * slowFactor);
+
+        // 속도 복원 타이머 설정
+        this.scene.time.addEvent({
+            delay: duration,
+            callback: () => {
+                if (this.alive) {
+                    this.body.setVelocity(this.originalSpeed.x, this.originalSpeed.y);
+                    this.slow = false;
+                }
+            },
+            callbackScope: this,
+            loop: false,
+        });
+    }
+
+    applyDamageOverTime(duration, tick, damagePerSecond, attacker) {
+        if (!this.alive) return;
+
+        this.damageOverTime = this.scene.time.addEvent({
+            delay: tick,
+            callback: () => {
+                if (!this.alive) return;
+                this.hit(damagePerSecond, 0, attacker);
+            },
+            callbackScope: this,
+            loop: true,
+        });
+
+        this.scene.time.addEvent({
+            delay: duration,
+            callback: () => {
+                if (this.damageOverTime) {
+                    this.damageOverTime.remove();
+                }
             },
             callbackScope: this,
             loop: false,
@@ -153,7 +209,7 @@ class Monster extends Phaser.GameObjects.Container {
         if (this.x > this.scene.game.config.width) {
             this.setPosition(tileWidth / 2, tileHeight / 2);
             this.scene.gold -= 1;
-            if(this.scene.gold < 0) this.scene.gold = 0;
+            if (this.scene.gold < 0) this.scene.gold = 0;
         }
     }
 }

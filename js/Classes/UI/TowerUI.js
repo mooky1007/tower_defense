@@ -1,4 +1,5 @@
 import AxeShadow from '../GameObjects/Shadows/AxeShadow.js';
+import BowShadow from '../GameObjects/Shadows/BowShadow.js';
 import SpearShadow from '../GameObjects/Shadows/SpearShadow.js';
 import SwordShadow from '../GameObjects/Shadows/SwordShadow.js';
 
@@ -30,19 +31,15 @@ class TowerUI extends Phaser.GameObjects.Container {
 
         const img3 = this.scene.add.sprite(0, 0, '');
 
-        const text4 = this.scene.add.text(
-            0,
-            0,
-            `Damage: 2~3\nSpeed : 0.3s
-          `,
-            {
-                fontSize: '13px',
-                color: '#fff',
-                fontFamily: 'mabi',
-            }
-        );
+        const text4 = this.scene.add.text(0, 0, `Damage: 2~3\nSpeed : 0.3s`, {
+            fontSize: '13px',
+            color: '#fff',
+            fontFamily: 'mabi',
+        });
         text4.setOrigin(0, 0);
         text4.setPosition(testButton3.width / 2 + 10, text3.y);
+
+        testButton3.inforText = text4;
 
         testButton3.add([line3, text3, img3, text4]);
         testButton3.setInteractive();
@@ -63,6 +60,12 @@ class TowerUI extends Phaser.GameObjects.Container {
             this.testButton3.list.find(
                 (el) => el.type === 'Text'
             ).text = `Lv. ${this.scene.selectedZone.shadow.level} ${this.scene.selectedZone.shadow.name}`;
+            this.testButton3.inforText.text = `Damage: ${this.scene.selectedZone.shadow.damage.map((el) => Math.round(el)).join('~')}\nSpeed : ${
+                this.scene.selectedZone.shadow.attackSpeed
+            }ms\nCritical Rate: ${this.scene.selectedZone.shadow.criticalRate * 100}%\nExp: ${[
+                this.scene.selectedZone.shadow.exp,
+                this.scene.selectedZone.shadow.nextExp,
+            ].join('/')}\nLevel Up Price: ${this.scene.selectedZone.shadow.level * this.scene.selectedZone.shadow.price}gold`;
         }
     }
 }
@@ -86,6 +89,10 @@ class SummonUI {
             new SummonButton(this, {
                 idx: 2,
                 summon: SpearShadow,
+            }),
+            new SummonButton(this, {
+                idx: 3,
+                summon: BowShadow,
             }),
         ];
     }
@@ -116,6 +123,7 @@ class SummonButton extends Phaser.GameObjects.Container {
         this.setInteractive();
         this.on('pointerdown', () => {
             this.scene.selectedZone.summon(new config.summon(this.scene.selectedZone));
+
             this.parent.parent.update();
         });
     }

@@ -17,16 +17,21 @@ class SpearShadow extends Shadow {
         this.attckFramRate = 24;
 
         this.level = 1;
-        this.damage = [2, 7];
-        this.radius = [20, 200];
-        this.attackSpeed = 400;
-        this.criticalRate = 0.4;
+        this.damage = [2, 5];
+        this.radius = [this.parent.scene.game.tile.width, this.parent.scene.game.tile.width * 5];
+        this.attackSpeed = 1200;
+        this.criticalRate = 0.3;
 
         this.radiusType = 'cross';
     }
 
     static shadowName = 'Spear';
     static spriteKey = 'spear_man';
+
+    hitMonster(enemy) {
+        super.hitMonster(enemy);
+        enemy.applyDamageOverTime(2000, 500, this.damage[0]/4, this);
+    }
 }
 
 export default SpearShadow;
