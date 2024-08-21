@@ -81,8 +81,6 @@ class Shadow {
     }
 
     levelUp() {
-        if (this.scene.gold < this.price * this.level) return;
-        this.scene.gold -= this.price * this.level;
         this.exp -= this.nextExp;
         this.level += 1;
 
