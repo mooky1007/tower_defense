@@ -39,7 +39,7 @@ class Shadow {
     set exp(value) {
         this._exp = value;
         this.scene.ui.update();
-        if (this._exp >= this.nextExp) {
+        if (value >= this.nextExp) {
             this.levelUp();
         }
     }
@@ -83,8 +83,8 @@ class Shadow {
     levelUp() {
         if (this.scene.gold < this.price * this.level) return;
         this.scene.gold -= this.price * this.level;
+        this.exp -= this.nextExp;
         this.level += 1;
-        this.exp = 0;
 
         this.levelText.text = this.level;
         this.damage = this.damage.map((el) => el * 1.1 + 1);

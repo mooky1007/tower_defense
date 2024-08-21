@@ -54,6 +54,8 @@ class ZoneTile extends Phaser.GameObjects.Zone {
     summon(shadow) {
         if (this.shadow) return;
         if (shadow.checkGold()) return;
+        if(this.scene.zones.getChildren().filter(el => el.shadow).length >= this.scene.applyShadow) return;
+
         this.scene.gold -= shadow.price;
 
         shadow.create();

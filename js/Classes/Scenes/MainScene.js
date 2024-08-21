@@ -9,6 +9,7 @@ class MainScene extends Phaser.Scene {
         this.gold = 30;
 
         this.waveLevel = 0;
+        this.applyShadow = 4;
     }
 
     preload() {
