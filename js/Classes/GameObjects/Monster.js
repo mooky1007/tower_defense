@@ -22,6 +22,7 @@ class Monster extends Phaser.GameObjects.Container {
         };
 
         this._hp = 3 + (waveLevel * 1.5) ** (waveLevel * 0.1);
+        this.originHp = this._hp;
         this.gold = Math.floor(1 + waveLevel * 1.2);
         this.speed = Math.random() * 50 + 50;
 
@@ -91,7 +92,7 @@ class Monster extends Phaser.GameObjects.Container {
             callback: () => {
                 this.sprite.clearTint();
                 this.hp -= value;
-                if (this.hp <= 0) attacker.exp += 1;
+                if (this.hp <= 0) attacker.exp += Math.trunc(this.originHp * 0.1 < 1 ? 1 : this.originHp * 0.1);
             },
             callbackScope: this,
             loop: false,
