@@ -3,6 +3,8 @@ class Shadow {
         this.scene = parent.scene;
 
         this.parent = parent;
+        this.name = 'unknown';
+        this.level = 1;
         this.price = 5;
 
         this.spriteOffsetY = 0;
@@ -18,7 +20,6 @@ class Shadow {
 
         this.attackType = 'instantHit';
 
-        this.level = 0;
         this.damage = [0, 0];
         this.radius = [30, 100];
         this.attackSpeed = 1000;
@@ -34,6 +35,7 @@ class Shadow {
         this.sprite.setOrigin(0.5, 0.5);
         this.sprite.setSize(this.width, this.height);
         this.sprite.setScale(this.spriteScale);
+        this.sprite.setPosition(this.sprite.x + Math.random() * 3, this.sprite.y + Math.random() * 3);
         this.sprite.anims.create({
             key: 'idle',
             frames: this.sprite.anims.generateFrameNumbers(this.idleSpriteKey, { start: this.idleFrame[0], end: this.idleFrame[1] }),
@@ -50,7 +52,24 @@ class Shadow {
 
         this.sprite.play('idle');
 
+        this.levelText = this.scene.add.text(this.parent.x, this.parent.y + this.parent.height, this.level, {
+            fontSize: '9px',
+            color: '#fff',
+            fontFamily: 'mabi',
+        });
+        this.levelText.setStroke(4, 0x000000);
+
         this[`${this.radiusType}Area`]();
+    }
+
+    levelUp() {
+        if (this.scene.gold < this.price * this.level) return;
+        this.scene.gold -= this.price * this.level;
+        this.level += 1;
+
+        this.levelText.text = this.level;
+        this.damage = this.damage.map((el) => el + 1);
+        this.attackSpeed -= 10;
     }
 
     crossArea() {
@@ -67,18 +86,23 @@ class Shadow {
         this.sprite.setFlipX(enemy.x > this.sprite.x);
         this.attack = true;
 
-        this.scene.sound.add('swordSwipe', {
-            volume: 0.1,
-        }).play();
+        this.scene.sound
+            .add('swordSwipe', {
+                volume: 0.3,
+            })
+            .play();
 
         this.sprite.anims.play('attack');
         enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate);
         this.sprite.on('animationcomplete', () => {
             this.sprite.play('idle');
             this.sprite.off('animationcomplete');
-            setTimeout(() => {
-                this.attack = false;
-            }, this.attackSpeed);
+            this.scene.time.addEvent({
+                delay: this.attackSpeed,
+                callback: () => (this.attack = false),
+                callbackScope: this,
+                loop: false,
+            });
         });
     }
 
@@ -110,9 +134,12 @@ class Shadow {
             radius.destroy();
             this.sprite.play('idle');
             this.sprite.off('animationcomplete');
-            setTimeout(() => {
-                this.attack = false;
-            }, this.attackSpeed);
+            this.scene.time.addEvent({
+                delay: this.attackSpeed,
+                callback: () => (this.attack = false),
+                callbackScope: this,
+                loop: false,
+            });
         });
     }
 
@@ -127,8 +154,7 @@ class Shadow {
     }
 
     checkGold() {
-        const { price } = this;
-        return this.scene.gold < price;
+        return this.scene.gold < this.price;
     }
 }
 

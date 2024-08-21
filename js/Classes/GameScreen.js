@@ -53,7 +53,7 @@ class GameScreen extends Phaser.GameObjects.Container {
         this.scene.physics.add.collider(this.scene.enemys, this.bottomArea);
         this.scene.physics.add.collider(this.scene.enemys, this.leftArea);
 
-        this.timer = new Timer(scene, 10);
+        this.timer = new Timer(scene, 30);
         this.monsterCount = new MonsterCount(scene);
         this.goldCount = new Gold(scene);
 

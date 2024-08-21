@@ -3,6 +3,8 @@ import Shadow from './Shadow.js';
 class SwordShadow extends Shadow {
     constructor(parent) {
         super(parent);
+
+        this.name = 'Sword';
         this.price = 10;
 
         this.spriteOffsetY = -15;
@@ -23,10 +25,8 @@ class SwordShadow extends Shadow {
         this.radiusType = 'cross';
     }
 
-    create() {
-        super.create();
-        return [this.sprite, ...this.radiusArea];
-    }
+    static shadowName = 'Sword';
+    static spriteKey = 'sword_man';
 }
 
 export default SwordShadow;

@@ -1,6 +1,5 @@
-import AxeMasterShadow from '../GameObjects/Shadows/AxeMasterShadow.js';
 import AxeShadow from '../GameObjects/Shadows/AxeShadow.js';
-import SwordMasterShadow from '../GameObjects/Shadows/SwordMasterShadow.js';
+import SpearShadow from '../GameObjects/Shadows/SpearShadow.js';
 import SwordShadow from '../GameObjects/Shadows/SwordShadow.js';
 
 class TowerUI extends Phaser.GameObjects.Container {
@@ -10,61 +9,114 @@ class TowerUI extends Phaser.GameObjects.Container {
 
         this.setPosition(20, this.scene.game.tile.height * 10 + 20);
         this.setSize(this.scene.game.tile.width, this.scene.game.tile.height);
-
-        const testButton = this.scene.add.container(scene);
-        testButton.setSize(100, 60);
-        testButton.setPosition(50, 15);
-
-        const line = this.scene.add.graphics();
-        line.fillStyle(0xffffff, 0.3);
-        line.fillRect(-testButton.width / 2, -testButton.height / 2, testButton.width, testButton.height);
-
-        const text = this.scene.add.text(-testButton.width / 2 + 5, -testButton.height / 2, 'Sword', {
-            fontSize: '13px',
-            color: '#000',
-            fontFamily: 'mabi',
-        });
-
-        const img = this.scene.add.sprite(0, 0, 'sword_man');
-
-        testButton.add([line, text, img]);
-        this.add(testButton);
-
-        testButton.setInteractive();
-        testButton.on('pointerdown', () => {
-            this.scene.selectedZone.summon(new SwordShadow(this.scene.selectedZone));
-        });
-
-        const testButton2 = this.scene.add.container(scene);
-        testButton2.setSize(100, 60);
-        testButton2.setPosition(50 + testButton.width + 20, 15);
-
-        const line2 = this.scene.add.graphics();
-        line2.fillStyle(0xffffff, 0.3);
-        line2.fillRect(-testButton.width / 2, -testButton2.height / 2, testButton2.width, testButton2.height);
-
-        const text2 = this.scene.add.text(-testButton2.width / 2 + 5, -testButton2.height / 2, 'Axe', {
-            fontSize: '13px',
-            color: '#000',
-            fontFamily: 'mabi',
-        });
-
-        const img2 = this.scene.add.sprite(0, 0, 'axe_man');
-
-        testButton2.add([line2, text2, img2]);
-        this.add(testButton2);
-
-        testButton2.setInteractive();
-        testButton2.on('pointerdown', () => {
-            this.scene.selectedZone.summon(new AxeShadow(this.scene.selectedZone));
-        });
-
         this.scene.add.existing(this);
+
+        this.summonUI = new SummonUI(this).buttons;
+
+        const testButton3 = this.scene.add.container(scene);
+        this.testButton3 = testButton3;
+        testButton3.setSize(this.scene.game.tile.width * 2, this.scene.game.tile.height * 2 - 40);
+        testButton3.setPosition(testButton3.width / 2, testButton3.height / 2);
+
+        const line3 = this.scene.add.graphics();
+        line3.fillStyle(0xffffff, 0.3);
+        line3.fillRect(-testButton3.width / 2, -testButton3.height / 2, testButton3.width, testButton3.height);
+
+        const text3 = this.scene.add.text(-testButton3.width / 2 + 5, -testButton3.height / 2 + 5, '', {
+            fontSize: '13px',
+            color: '#000',
+            fontFamily: 'mabi',
+        });
+
+        const img3 = this.scene.add.sprite(0, 0, '');
+
+        const text4 = this.scene.add.text(
+            0,
+            0,
+            `Damage: 2~3\nSpeed : 0.3s
+          `,
+            {
+                fontSize: '13px',
+                color: '#fff',
+                fontFamily: 'mabi',
+            }
+        );
+        text4.setOrigin(0, 0);
+        text4.setPosition(testButton3.width / 2 + 10, text3.y);
+
+        testButton3.add([line3, text3, img3, text4]);
+        testButton3.setInteractive();
+        testButton3.on('pointerdown', () => {
+            this.scene.selectedZone.shadow.levelUp();
+            this.update();
+        });
+
+        this.add(testButton3);
     }
 
     update() {
         this.setVisible(this.scene.selectedZone);
+        this.summonUI.forEach((el) => el.setVisible(!this.scene.selectedZone?.shadow));
+        this.testButton3.setVisible(this.scene.selectedZone?.shadow);
+        if (this.scene.selectedZone?.shadow) {
+            this.testButton3.list.find((el) => el.type === 'Sprite').setTexture(this.scene.selectedZone.shadow.idleSpriteKey);
+            this.testButton3.list.find(
+                (el) => el.type === 'Text'
+            ).text = `Lv. ${this.scene.selectedZone.shadow.level} ${this.scene.selectedZone.shadow.name}`;
+        }
     }
 }
 
 export default TowerUI;
+
+class SummonUI {
+    constructor(parent) {
+        this.parent = parent;
+        this.scene = parent.scene;
+
+        this.buttons = [
+            new SummonButton(this, {
+                idx: 0,
+                summon: SwordShadow,
+            }),
+            new SummonButton(this, {
+                idx: 1,
+                summon: AxeShadow,
+            }),
+            new SummonButton(this, {
+                idx: 2,
+                summon: SpearShadow,
+            }),
+        ];
+    }
+}
+
+class SummonButton extends Phaser.GameObjects.Container {
+    constructor(parent, config) {
+        super(parent.scene);
+        this.parent = parent;
+        this.setSize(100, this.scene.game.tile.height * 2 - 40);
+        this.setPosition(this.width / 2 + 100 * config.idx + (config.idx - 1) * 10, this.height / 2);
+
+        const line = this.scene.add.graphics();
+        line.fillStyle(0xffffff, 0.3);
+        line.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+
+        const text = this.scene.add.text(-this.width / 2 + 5, -this.height / 2 + 5, config.summon.shadowName, {
+            fontSize: '13px',
+            color: '#000',
+            fontFamily: 'mabi',
+        });
+
+        const img = this.scene.add.sprite(0, 0, config.summon.spriteKey);
+
+        this.add([line, text, img]);
+        this.parent.parent.add(this);
+
+        this.setInteractive();
+        this.on('pointerdown', () => {
+            this.scene.selectedZone.summon(new config.summon(this.scene.selectedZone));
+            this.parent.parent.update();
+        });
+    }
+}

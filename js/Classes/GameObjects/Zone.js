@@ -56,9 +56,11 @@ class ZoneTile extends Phaser.GameObjects.Zone {
         if (shadow.checkGold()) return;
         this.scene.gold -= shadow.price;
 
-        this.shadow = shadow.create();
+        shadow.create();
+        this.shadow = shadow;
 
-        this.parent.add(this.shadow);
+        this.parent.add(this.shadow.sprite);
+        this.parent.add(this.shadow.radiusArea);
     }
 
     update() {

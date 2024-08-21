@@ -8,16 +8,18 @@ class MainScene extends Phaser.Scene {
         super({ key: 'GameScene' });
         this.gold = 30;
 
-        this.level = 0;
+        this.waveLevel = 0;
     }
 
     preload() {
         const frame64 = { frameWidth: 64, frameHeight: 64 };
 
-        this.load.spritesheet('axe_man', 'assets/axe_man.png', frame64);
-        this.load.spritesheet('axe_man2', 'assets/axe_man2.png', frame64);
         this.load.spritesheet('sword_man', 'assets/sword_man.png', frame64);
         this.load.spritesheet('sword_man2', 'assets/sword_man2.png', frame64);
+        this.load.spritesheet('axe_man', 'assets/axe_man.png', frame64);
+        this.load.spritesheet('axe_man2', 'assets/axe_man2.png', frame64);
+        this.load.spritesheet('spear_man', 'assets/spear_man.png', frame64);
+        this.load.spritesheet('spear_man2', 'assets/spear_man2.png', frame64);
         this.load.spritesheet('blackslime', 'assets/blackslime.png', frame64);
 
         this.load.audio('bgm', 'assets/bgm.mp3');
@@ -50,12 +52,11 @@ class MainScene extends Phaser.Scene {
         this.gameScreen = new GameScreen(this, 0, tile.height);
 
         this.physics.add.collider(this.enemys, this.zones);
-
         this.spawnWave();
     }
 
     spawnWave() {
-        new Wave(this, 45);
+        new Wave(this, 20);
     }
 
     update() {

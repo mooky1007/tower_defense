@@ -1,10 +1,11 @@
 import Sprite from './Monsters/Sprite.js';
 
 class Monster extends Phaser.GameObjects.Container {
-    constructor(scene, x, y) {
+    constructor(scene, x, y, waveLevel, type) {
         super(scene, x, y);
         this.name = 'monster';
         this.alive = true;
+        this.type = type;
 
         const tileWidth = scene.game.tile.width;
         const tileHeight = scene.game.tile.height;
@@ -19,24 +20,31 @@ class Monster extends Phaser.GameObjects.Container {
             y: this.y - tileHeight / 2,
         };
 
-        this._hp = 12;
-        this.speed = 125;
+        this._hp = 6 + (waveLevel * 1.5) ** (waveLevel * 0.1);
+        this.gold = Math.floor(1 + waveLevel * 1.2);
+        this.speed = 100;
 
         this.scene.physics.world.enable(this);
         this.body.allowGravity = false;
 
         this.scene.enemys.add(this);
-        this.body.setVelocity(this.speed, 0);
 
         this.sprite = new Sprite(this.scene, x, y, 'blackslime');
         this.sprite.setPosition(
-            this.sprite.x + Math.random() * (Math.random() < 0.5 ? 1 : -1) * 5,
-            this.sprite.y + Math.random() * (Math.random() < 0.5 ? 1 : -1) * 5
+            this.sprite.x + Math.random() * (Math.random() < 0.5 ? 1 : -1) * 10,
+            this.sprite.y + Math.random() * (Math.random() < 0.5 ? 1 : -1) * 10
         );
 
         this.sprite.anims.play('right');
         this.add(this.sprite);
 
+        if (this.type === 'boss') {
+            this._hp *= 10;
+            this.gold *= 10;
+            this.speed = 80;
+            this.sprite.setScale(2);
+        }
+        this.body.setVelocity(this.speed, 0);
         scene.gameScreen.add(this);
     }
 
@@ -91,7 +99,7 @@ class Monster extends Phaser.GameObjects.Container {
     die() {
         if (!this.alive) return;
         this.alive = false;
-        this.scene.gold += 1;
+        this.scene.gold += this.gold;
 
         this.scene.time.addEvent({
             delay: 200,
@@ -110,17 +118,17 @@ class Monster extends Phaser.GameObjects.Container {
         } = this;
 
         if (blocked.right) {
-            this.body.setVelocity(0, speed * 0.5);
+            this.body.setVelocity(0, speed);
             this.sprite.play('left');
             if (this.body.wasTouching.down) {
-                this.body.setVelocity(0, -speed * 0.5);
+                this.body.setVelocity(0, -speed);
             }
         }
 
         if (blocked.down) {
             this.body.setVelocity(-speed, 0);
             if (this.body.wasTouching.right) {
-                this.body.setVelocity(0, -speed * 0.5);
+                this.body.setVelocity(0, -speed);
             }
         }
 
@@ -135,7 +143,7 @@ class Monster extends Phaser.GameObjects.Container {
         if (blocked.up) {
             this.body.setVelocity(speed, 0);
             if (this.body.wasTouching.left) {
-                this.body.setVelocity(0, speed * 0.5);
+                this.body.setVelocity(0, speed);
             }
         }
 
@@ -144,6 +152,8 @@ class Monster extends Phaser.GameObjects.Container {
 
         if (this.x > this.scene.game.config.width) {
             this.setPosition(tileWidth / 2, tileHeight / 2);
+            this.scene.gold -= 1;
+            if(this.scene.gold < 0) this.scene.gold = 0;
         }
     }
 }

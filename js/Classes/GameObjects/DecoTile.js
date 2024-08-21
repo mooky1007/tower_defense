@@ -5,7 +5,7 @@ class DecoTile extends Phaser.GameObjects.Image {
         super(scene, scene.game.tile.width * x, scene.game.tile.height * y, texture);
 
         this.setDisplaySize(scene.game.tile.width, scene.game.tile.height);
-        
+
         this.setOrigin(0, 0);
         this.setDepth(-9);
         scene.add.existing(this);

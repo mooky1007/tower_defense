@@ -3,6 +3,8 @@ import Shadow from './Shadow.js';
 class AxeShadow extends Shadow {
     constructor(parent) {
         super(parent);
+
+        this.name = 'Axe';
         this.price = 15;
 
         this.spriteOffsetY = -15;
@@ -26,10 +28,8 @@ class AxeShadow extends Shadow {
         this.radiusType = 'cross';
     }
 
-    create() {
-        super.create();
-        return [this.sprite, ...this.radiusArea];
-    }
+    static shadowName = 'Axe';
+    static spriteKey = 'axe_man';
 }
 
 export default AxeShadow;
