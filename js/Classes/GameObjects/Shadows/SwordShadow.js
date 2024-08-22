@@ -5,7 +5,7 @@ class SwordShadow extends Shadow {
         super(parent);
 
         this.name = 'Sword';
-        this.price = 10;
+        this.price = 5;
 
         this.spriteOffsetY = -15;
         this.idleSpriteKey = 'sword_man';
@@ -16,11 +16,14 @@ class SwordShadow extends Shadow {
         this.attackFrame = [0, 3];
         this.attckFramRate = 18;
 
+        this.attackType = 'instantHitRadius';
+
         this.level = 1;
-        this.damage = [5, 7];
-        this.radius = [this.parent.scene.game.tile.width, this.parent.scene.game.tile.width * 3];
-        this.attackSpeed = 500;
-        this.criticalRate = 0.2;
+        this.damage = [1, 2];
+        this.radius = [this.parent.scene.game.tile.width * 2, this.parent.scene.game.tile.width * 2];
+        this.attackSpeed = 250;
+        this.attackRadius = 1;
+        this.criticalRate = 0.15;
 
         this.radiusType = 'cross';
     }

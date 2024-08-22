@@ -1,8 +1,5 @@
-import DecoTile from './GameObjects/DecoTile.js';
-import ZoneTile from './GameObjects/Zone.js';
-import Gold from './UI/Gold.js';
-import MonsterCount from './UI/MonsterCount.js';
-import Timer from './UI/Timer.js';
+import DecoTile from '../GameObjects/DecoTile.js';
+import ZoneTile from '../GameObjects/Zone.js';
 
 class GameScreen extends Phaser.GameObjects.Container {
     constructor(scene, x, y) {
@@ -37,7 +34,7 @@ class GameScreen extends Phaser.GameObjects.Container {
         this.topArea.body.allowGravity = false;
         this.topArea.body.immovable = true;
 
-        this.bottomArea = this.scene.add.zone(0, this.scene.game.tile.height * (scene.game.tileSize[1] - 2) + 1, this.scene.game.config.width, 1);
+        this.bottomArea = this.scene.add.zone(0, this.scene.game.tile.height * (scene.game.tileSize[1] - 4) + 1, this.scene.game.config.width, 1);
         this.bottomArea.setOrigin(0, 0);
         this.scene.physics.add.existing(this.bottomArea);
         this.bottomArea.body.allowGravity = false;
@@ -53,9 +50,9 @@ class GameScreen extends Phaser.GameObjects.Container {
         this.scene.physics.add.collider(this.scene.enemys, this.bottomArea);
         this.scene.physics.add.collider(this.scene.enemys, this.leftArea);
 
-        this.timer = new Timer(scene, 30);
-        this.monsterCount = new MonsterCount(scene);
-        this.goldCount = new Gold(scene);
+        // this.timer = new Timer(scene, 30);
+        // this.monsterCount = new MonsterCount(scene);
+        // this.goldCount = new Gold(scene);
 
         this.scene.add.existing(this);
     }
@@ -88,8 +85,6 @@ class GameScreen extends Phaser.GameObjects.Container {
 
     update() {
         this.getAll('name', 'monster').forEach((monster) => monster.update());
-        this.scene.gameScreen.monsterCount.update();
-        this.scene.gameScreen.goldCount.update();
     }
 }
 

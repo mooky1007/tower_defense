@@ -16,11 +16,15 @@ class SpearShadow extends Shadow {
         this.attackFrame = [0, 3];
         this.attckFramRate = 24;
 
+        this.attackType = 'instantHitRadius';
+
         this.level = 1;
-        this.damage = [2, 5];
-        this.radius = [this.parent.scene.game.tile.width, this.parent.scene.game.tile.width * 5];
+        this.damage = [1, 3];
+        this.radius = this.radius = [this.parent.scene.game.tile.width * 2, this.parent.scene.game.tile.width * 4];
         this.attackSpeed = 1200;
-        this.criticalRate = 0.3;
+        this.criticalRate = 0.2;
+
+        this.attackRadius = 5;
 
         this.radiusType = 'cross';
     }
@@ -30,7 +34,7 @@ class SpearShadow extends Shadow {
 
     hitMonster(enemy) {
         super.hitMonster(enemy);
-        enemy.applyDamageOverTime(2000, 500, this.damage[0]/4, this);
+        enemy.applyDamageOverTime(4000, 1000, this.level * 3, this);
     }
 }
 

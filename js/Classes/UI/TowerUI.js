@@ -1,6 +1,7 @@
 import AxeShadow from '../GameObjects/Shadows/AxeShadow.js';
 import BowShadow from '../GameObjects/Shadows/BowShadow.js';
 import SpearShadow from '../GameObjects/Shadows/SpearShadow.js';
+import Supply from '../GameObjects/Shadows/Supply.js';
 import SwordShadow from '../GameObjects/Shadows/SwordShadow.js';
 
 class TowerUI extends Phaser.GameObjects.Container {
@@ -44,10 +45,21 @@ class TowerUI extends Phaser.GameObjects.Container {
         testButton3.add([line3, text3, img3, text4]);
         testButton3.setInteractive();
         testButton3.on('pointerdown', () => {
-            if (this.scene.gold < this.scene.selectedZone.shadow.price * this.scene.selectedZone.shadowl.evel) return;
+            if (this.scene.gold < this.scene.selectedZone.shadow.price * this.scene.selectedZone.shadow.level) return;
             this.scene.gold -= this.scene.selectedZone.shadow.price * this.scene.selectedZone.shadow.level;
             this.scene.selectedZone.shadow.levelUp();
             this.update();
+        });
+
+        const levelUp = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.U);
+
+        levelUp.on('down', () => {
+            if (this.scene.selectedZone.shadow) {
+                if (this.scene.gold < this.scene.selectedZone.shadow.price * this.scene.selectedZone.shadow.level) return;
+                this.scene.gold -= this.scene.selectedZone.shadow.price * this.scene.selectedZone.shadow.level;
+                this.scene.selectedZone.shadow.levelUp();
+                this.update();
+            }
         });
 
         this.add(testButton3);
@@ -96,6 +108,10 @@ class SummonUI {
                 idx: 3,
                 summon: BowShadow,
             }),
+            new SummonButton(this, {
+                idx: 4,
+                summon: Supply,
+            }),
         ];
     }
 }
@@ -124,9 +140,20 @@ class SummonButton extends Phaser.GameObjects.Container {
 
         this.setInteractive();
         this.on('pointerdown', () => {
-            this.scene.selectedZone.summon(new config.summon(this.scene.selectedZone));
+            this.scene.selectedZone.summon(config.summon);
 
             this.parent.parent.update();
+        });
+
+        const mapping = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE'];
+
+        const key = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[mapping[config.idx]]);
+
+        key.on('down', () => {
+            if (this.scene.selectedZone) {
+                this.scene.selectedZone.summon(config.summon);
+                this.parent.parent.update();
+            }
         });
     }
 }

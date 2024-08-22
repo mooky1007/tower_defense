@@ -19,10 +19,10 @@ class AxeShadow extends Shadow {
 
         this.level = 1;
         this.price = 15;
-        this.damage = [3, 5];
-        this.radius = [this.parent.scene.game.tile.width, this.parent.scene.game.tile.width * 3];
+        this.damage = [2, 3];
+        this.radius = [this.parent.scene.game.tile.width * 2, this.parent.scene.game.tile.width * 2];
         this.attackSpeed = 900;
-        this.attackRadius = 40;
+        this.attackRadius = 60;
         this.criticalRate = 0.05;
 
         this.radiusType = 'cross';

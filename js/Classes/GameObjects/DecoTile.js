@@ -1,5 +1,3 @@
-import Tower from './Tower.js';
-
 class DecoTile extends Phaser.GameObjects.Image {
     constructor(scene, x, y, texture, ds = true) {
         super(scene, scene.game.tile.width * x, scene.game.tile.height * y, texture);
@@ -8,6 +6,12 @@ class DecoTile extends Phaser.GameObjects.Image {
 
         this.setOrigin(0, 0);
         this.setDepth(-9);
+
+        this.setInteractive();
+        this.on('pointerdown', () => {
+            scene.selectedZone = null;
+        });
+
         scene.add.existing(this);
     }
 }

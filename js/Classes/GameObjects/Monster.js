@@ -21,7 +21,7 @@ class Monster extends Phaser.GameObjects.Container {
             y: this.y - tileHeight / 2,
         };
 
-        this._hp = 3 + (waveLevel * 1.5) ** (waveLevel * 0.1);
+        this.hp = 2 + waveLevel * 20;
         this.originHp = this._hp;
         this.gold = Math.floor(1 + waveLevel * 1.2);
         this.speed = 100;
@@ -41,7 +41,7 @@ class Monster extends Phaser.GameObjects.Container {
         this.add(this.sprite);
 
         if (this.type === 'boss') {
-            this._hp *= 10;
+            this.hp *= 10;
             this.gold *= 10;
             this.speed = 80;
             this.sprite.setScale(2);
@@ -55,11 +55,11 @@ class Monster extends Phaser.GameObjects.Container {
     }
 
     set hp(value) {
+        if (value <= 0) this.die();
         this._hp = value;
-        if (this._hp <= 0) this.die();
     }
 
-    hit(value, cr, attacker) {
+    hit(value, cr) {
         if (!this.alive) return;
         this.sprite.setTintFill(0xff0000, 1);
 
@@ -92,7 +92,6 @@ class Monster extends Phaser.GameObjects.Container {
             callback: () => {
                 this.sprite.clearTint();
                 this.hp -= value;
-                if (this.hp <= 0) attacker.exp += Math.trunc(this.originHp * 0.2 < 1 ? 1 : this.originHp * 0.2);
             },
             callbackScope: this,
             loop: false,
@@ -145,8 +144,9 @@ class Monster extends Phaser.GameObjects.Container {
 
     applyDamageOverTime(duration, tick, damagePerSecond, attacker) {
         if (!this.alive) return;
+        if (this.DamageOverTime) return;
 
-        this.damageOverTime = this.scene.time.addEvent({
+        const damageOverTime = this.scene.time.addEvent({
             delay: tick,
             callback: () => {
                 if (!this.alive) return;
@@ -156,12 +156,10 @@ class Monster extends Phaser.GameObjects.Container {
             loop: true,
         });
 
-        this.scene.time.addEvent({
+        this.DamageOverTime = this.scene.time.addEvent({
             delay: duration,
             callback: () => {
-                if (this.damageOverTime) {
-                    this.damageOverTime.remove();
-                }
+                if (damageOverTime) damageOverTime.remove();
             },
             callbackScope: this,
             loop: false,

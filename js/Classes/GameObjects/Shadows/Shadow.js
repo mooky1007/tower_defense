@@ -6,8 +6,7 @@ class Shadow {
         this.name = 'unknown';
         this.level = 1;
         this.price = 5;
-
-        this._exp = 0;
+        this.capacity = 1;
 
         this.spriteOffsetY = 0;
         this.idleSpriteKey = '';
@@ -32,22 +31,6 @@ class Shadow {
         this.radiusArea = [];
     }
 
-    get exp() {
-        return this._exp;
-    }
-
-    set exp(value) {
-        this._exp = value;
-        this.scene.ui.update();
-        if (value >= this.nextExp) {
-            this.levelUp();
-        }
-    }
-
-    get nextExp() {
-        return this.level * 20;
-    }
-
     create() {
         this.sprite = this.scene.add.sprite(this.parent.center.x, this.parent.center.y + this.spriteOffsetY * this.spriteScale, this.idleSpriteKey);
         this.sprite.setOrigin(0.5, 0.5);
@@ -61,12 +44,14 @@ class Shadow {
             repeat: -1, // 무한 반복을 의미
         });
 
-        this.sprite.anims.create({
-            key: 'attack',
-            frames: this.sprite.anims.generateFrameNumbers(this.attackSpriteKey, { start: this.attackFrame[0], end: this.attackFrame[1] }),
-            frameRate: this.attckFramRate,
-            repeat: 0, // 무한 반복을 의미
-        });
+        if (this.attackSpriteKey) {
+            this.sprite.anims.create({
+                key: 'attack',
+                frames: this.sprite.anims.generateFrameNumbers(this.attackSpriteKey, { start: this.attackFrame[0], end: this.attackFrame[1] }),
+                frameRate: this.attckFramRate,
+                repeat: 0, // 무한 반복을 의미
+            });
+        }
 
         this.sprite.play('idle');
 
@@ -77,16 +62,21 @@ class Shadow {
         });
         this.levelText.setStroke(4, 0x000000);
 
-        this[`${this.radiusType}Area`]();
+        this.attackSound = this.scene.sound.add('swordSwipe', { volume: 0.3 });
+
+        if (this.radiusType) {
+            this[`${this.radiusType}Area`]();
+        }
     }
 
     levelUp() {
-        this.exp -= this.nextExp;
+        if (this.exp >= this.nextExp) this.exp -= this.nextExp;
+        else this.exp = 0;
+
         this.level += 1;
 
         this.levelText.text = this.level;
-        this.damage = this.damage.map((el) => el * 1.1 + 1);
-        this.attackSpeed -= 10;
+        this.damage = this.damage.map((el) => el + this.level * 2 + 1);
     }
 
     crossArea() {
@@ -111,7 +101,7 @@ class Shadow {
     }
 
     hitMonster(enemy) {
-        enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate, this);
+        enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate);
     }
 
     instantHit(enemy, shadow) {
@@ -121,11 +111,7 @@ class Shadow {
         this.sprite.setFlipX(enemy.x > this.sprite.x);
         this.attack = true;
 
-        this.scene.sound
-            .add('swordSwipe', {
-                volume: 0.3,
-            })
-            .play();
+        this.attackSound.play();
 
         this.sprite.anims.play('attack');
         this.hitMonster(enemy);
