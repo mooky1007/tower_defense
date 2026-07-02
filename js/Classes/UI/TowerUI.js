@@ -45,8 +45,8 @@ class TowerUI extends Phaser.GameObjects.Container {
         testButton3.add([line3, text3, img3, text4]);
         testButton3.setInteractive();
         testButton3.on('pointerdown', () => {
-            if (this.scene.gold < this.scene.selectedZone.shadow.price * this.scene.selectedZone.shadow.level) return;
-            this.scene.gold -= this.scene.selectedZone.shadow.price * this.scene.selectedZone.shadow.level;
+            if (this.scene.gold < (this.scene.selectedZone.shadow.price * 3) * this.scene.selectedZone.shadow.level) return;
+            this.scene.gold -= (this.scene.selectedZone.shadow.price * 3) * this.scene.selectedZone.shadow.level;
             this.scene.selectedZone.shadow.levelUp();
             this.update();
         });

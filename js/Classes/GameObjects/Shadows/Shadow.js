@@ -29,6 +29,8 @@ class Shadow {
 
         this.radiusType = 'cross';
         this.radiusArea = [];
+
+        this.nextExp = 10
     }
 
     create() {
@@ -75,6 +77,7 @@ class Shadow {
 
         this.level += 1;
 
+        this.nextExp = (this.level * 10 * 1.2)
         this.levelText.text = this.level;
         this.damage = this.damage.map((el) => el + this.level * 2 + 1);
     }
