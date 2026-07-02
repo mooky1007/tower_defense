@@ -30,7 +30,7 @@ class Shadow {
         this.radiusType = 'cross';
         this.radiusArea = [];
 
-        this.nextExp = 0
+        this.exp = 0
         this.nextExp = 10
     }
 
@@ -78,7 +78,7 @@ class Shadow {
 
         this.level += 1;
 
-        this.nextExp = (this.level * 10 * 1.2)
+        this.nextExp = (this.level * 15 * 1.2)
         this.levelText.text = this.level;
         this.damage = this.damage.map((el) => el + this.level * 2 + 1);
     }
@@ -105,8 +105,7 @@ class Shadow {
     }
 
     hitMonster(enemy) {
-        enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate);
-        if(!enemy.alive) this.exp += 1;
+        enemy.hit(Math.floor(Math.random() * (this.damage[1] - this.damage[0]) + this.damage[0]), this.criticalRate, this);
     }
 
     instantHit(enemy, shadow) {

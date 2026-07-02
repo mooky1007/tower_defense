@@ -59,7 +59,7 @@ class Monster extends Phaser.GameObjects.Container {
         this._hp = value;
     }
 
-    hit(value, cr) {
+    hit(value, cr, attacker) {
         if (!this.alive) return;
         this.sprite.setTintFill(0xff0000, 1);
 
@@ -92,6 +92,9 @@ class Monster extends Phaser.GameObjects.Container {
             callback: () => {
                 this.sprite.clearTint();
                 this.hp -= value;
+                if(this.hp <= 0) attacker.exp += 1;
+                if(attacker.exp >= attacker.nextExp) attacker.levelUp();
+                this.scene.ui.update();
             },
             callbackScope: this,
             loop: false,

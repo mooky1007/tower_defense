@@ -77,7 +77,7 @@ class TowerUI extends Phaser.GameObjects.Container {
             this.testButton3.inforText.text = `Damage: ${this.scene.selectedZone.shadow.damage.map((el) => Math.round(el)).join('~')}\nSpeed : ${
                 this.scene.selectedZone.shadow.attackSpeed
             }ms\nCritical Rate: ${this.scene.selectedZone.shadow.criticalRate * 100}%\nExp: ${[
-                this.scene.selectedZone.shadow.exp,
+                (this.scene.selectedZone.shadow.exp || 0),
                 this.scene.selectedZone.shadow.nextExp,
             ].join('/')}\nLevel Up Price: ${this.scene.selectedZone.shadow.level * this.scene.selectedZone.shadow.price}gold`;
         }
